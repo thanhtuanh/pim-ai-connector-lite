@@ -1,9 +1,16 @@
-FROM maven:3.9.6-eclipse-temurin-17 AS build
-WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
+FROM openjdk:17-slim
 
-FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+COPY target/pim-ai-connector-lite-0.0.1-SNAPSHOT.jar app.jar
+COPY src/main/resources/pim-config.xml /app/pim-config.xml
+COPY entrypoint.sh /app/entrypoint.sh
+
+RUN chmod +x /app/entrypoint.sh
+
+ENV ACTIVE_PRODUKTTYP_ID=fashion
+ENV PORT=8080
+
+EXPOSE 8080
+
+ENTRYPOINT ["/app/entrypoint.sh"]

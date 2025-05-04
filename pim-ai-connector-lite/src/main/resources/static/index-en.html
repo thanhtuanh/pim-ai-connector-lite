@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PIM-AI-Connector – KI-basierte Texte für Produktdaten</title>
+    <title>PIM-AI-Connector – AI-based Product Content Generation</title>
     <meta name="description"
-        content="Der PIM-AI-Connector erstellt automatisch hochwertige, SEO-optimierte Produkttexte aus strukturierten Daten. Ideal für PIM, DAM und E-Commerce-Systeme." />
+        content="The PIM-AI Connector automatically creates high-quality, SEO-optimized product descriptions from structured data. Ideal for PIM, DAM and e-commerce systems." />
     <meta name="author" content="DNguyen" />
     <meta name="keywords"
-        content="PIM, Produktinformationen, KI, E-Commerce, DAM, OpenAI, Java, Microservices, Spring Boot, Produkttexte, Content Automation" />
+        content="PIM, Product Information, AI, E-Commerce, DAM, OpenAI, Java, Microservices, Spring Boot, Product descriptions, Content Automation" />
     <!-- Favicons -->
     <link rel="icon" href="/assets/favicon.ico" type="image/x-icon" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
@@ -144,8 +144,8 @@
 <body>
     <header>
         <img src="/assets/pim-ai-logo.png" alt="PIM AI Logo" />
-        <h1>PIM-AI-Connector – KI-basierte Texte für Produktdaten</h1>
-        <p>Ideal für PIM, DAM, Onlineshops und digitale Kataloge</p>
+        <h1>PIM-AI-Connector – AI-based Product Content Generation</h1>
+        <p>Ideal for PIM, DAM, online shops, and digital catalogs</p>
 
         <div style="position: absolute; top: 1rem; right: 1rem;">
         </div>
@@ -155,91 +155,88 @@
     <main>
 
         <section>
-            <h2>🧠 So funktioniert der PIM-AI Connector – Von Daten zu Inhalten</h2>
+            <h2>🧠 How the PIM-AI Connector Works – From Data to Content</h2>
 
             <p>
-                Der <strong>PIM-AI Connector</strong> ist eine KI-gestützte Middleware, die strukturierte Produktdaten,
-                bestehende Beschreibungen und Produktbilder verarbeitet, analysiert und in hochwertige, marketingfertige
-                Inhalte
-                umwandelt.<br><br>
+                The <strong>PIM-AI Connector</strong> is an AI-powered middleware that processes, analyzes, and
+                transforms
+                structured product data, existing descriptions, and product images into high-quality, market-ready
+                content.<br><br>
 
-                🔧 <strong>Für Entwickler:</strong> Der Connector basiert auf einer Microservice-Architektur (Spring
-                Boot,
-                REST),
-                empfängt strukturierte JSON-Daten via API und verarbeitet diese mithilfe von OpenAI. Optional werden
-                Produktbilder mit Google Vision analysiert.<br><br>
+                🔧 <strong>For Developers:</strong> The connector is built on a microservice architecture (Spring Boot,
+                REST), receives structured JSON data via API, and processes it using OpenAI. Optionally, product images
+                can be analyzed with Google Vision.<br><br>
 
-                🛍️ <strong>Für Anwender und Kunden:</strong> Sie liefern einfach Ihre bestehenden Produktinformationen
-                –
-                der PIM-AI Connector erstellt daraus automatisch optimierte Texte, Bildvorschläge und Inhalte für Ihren
-                Webshop,
-                Ihr PIM-System oder Ihren Katalog.
+                🛍️ <strong>For Users and Customers:</strong> Simply provide your existing product information –
+                the PIM-AI Connector automatically creates optimized descriptions, image suggestions, and content for
+                your
+                online shop, PIM system, or catalog.
             </p>
             <p style="margin-top: 1rem;">
-                📘 <strong>Beispiel:</strong><br>
-                Sie geben den Titel <em>„Der Herr der Ringe"</em>, den Autor <em>„J.R.R. Tolkien"</em>, das Genre
-                <em>„Fantasy"</em>
-                und einige Schlagwörter an.<br>
-                Der PIM-AI Connector generiert daraus automatisch eine verkaufsstarke Produktbeschreibung – inklusive
-                Zielgruppenansprache und SEO-relevanter Begriffe.
+                📘 <strong>Example:</strong><br>
+                You provide the title <em>"The Lord of the Rings"</em>, the author <em>"J.R.R. Tolkien"</em>, the genre
+                <em>"Fantasy"</em>
+                and some keywords.<br>
+                The PIM-AI Connector automatically generates a compelling product description – including
+                target audience appeal and SEO-relevant terms.
             </p>
 
 
             <div style="text-align: center; margin-top: 1.5rem;">
-                <img src="/assets/pim-ai-overview.png" alt="PIM-AI Connector Funktionsweise"
+                <img src="/assets/pim-ai-overview.png" alt="PIM-AI Connector Functionality"
                     style="max-width: 300px; width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e0e0e0;" />
-                <p style="font-size: 0.9rem; color: #555;">🔁 Von Daten zu Inhalten – vollautomatisch & intelligent</p>
+                <p style="font-size: 0.9rem; color: #555;">🔁 From Data to Content – fully automated & intelligent</p>
             </div>
         </section>
 
         <section>
-            <h2>🔠 Produktbeschreibung generieren</h2>
+            <h2>🔠 Generate Product Description</h2>
             <p>
-                Mit unserem PIM-AI Connector können Sie sofort hochwertige Produktbeschreibungen erstellen.
-                Wählen Sie einen der vordefinierten Produkttypen und geben Sie die entsprechenden Parameter ein.
+                With our PIM-AI Connector, you can instantly create high-quality product descriptions.
+                Choose one of the predefined product types and enter the corresponding parameters.
             </p>
 
             <div class="info-box" id="produktTypInfo"></div>
 
             <form id="analyzeForm">
                 <div class="parameter-form" id="parameterForm">
-                    <!-- Parameter werden dynamisch geladen -->
+                    <!-- Parameters will be loaded dynamically -->
                 </div>
 
-                <button type="submit">Beschreibung generieren</button>
+                <button type="submit">Generate Description</button>
             </form>
 
-            <h3>Ergebnis:</h3>
-            <pre id="responseArea">Noch keine Anfrage gesendet.</pre>
+            <h3>Result:</h3>
+            <pre id="responseArea">No request sent yet.</pre>
         </section>
 
         <section>
-            <h2>🔗 Live-Demo API-Endpunkt</h2>
-            <p>Endpunkt für KI-basierte Produktbeschreibung:<br />
+            <h2>🔗 Live Demo API Endpoint</h2>
+            <p>Endpoint for AI-based product description:<br />
                 <code>/api/enrich/gpt</code>
             </p>
             <div class="note">
-                <strong>Wichtig:</strong> Dieser Endpunkt ist ein <u>POST-Endpunkt</u> und <u>nicht direkt im Browser
-                    aufrufbar</u>.
-                Bitte verwenden Sie ein Tool wie <code>curl</code> oder Postman.
+                <strong>Important:</strong> This endpoint is a <u>POST endpoint</u> and <u>cannot be called directly in
+                    the browser</u>.
+                Please use a tool like <code>curl</code> or Postman.
             </div>
         </section>
 
         <section>
-            <h2>💻 Beispiel cURL Request</h2>
+            <h2>💻 Example cURL Request</h2>
             <pre>curl -X POST http://localhost:8080/api/enrich/gpt \
 -H "Content-Type: application/json" \
 -d '{
   "p1": "Nike",
-  "p2": "Laufschuhe",
-  "p3": "Schwarz mit roten Akzenten",
-  "p4": "Synthetik und Mesh",
+  "p2": "Running Shoes",
+  "p3": "Black with red accents",
+  "p4": "Synthetic and mesh",
   "p5": "EU 42"
 }'</pre>
         </section>
 
         <section>
-            <h2>📦 Tech-Stack</h2>
+            <h2>📦 Tech Stack</h2>
             <ul>
                 <li>Java 17, Spring Boot 3</li>
                 <li>REST APIs, Microservices</li>
@@ -250,35 +247,27 @@
         </section>
 
         <section>
-            <h2>🎯 Zielgruppen</h2>
+            <h2>🎯 Target Audience</h2>
             <ul>
-                <li>PIM-/DAM-Systemanbieter</li>
-                <li>Onlineshop-Betreiber</li>
-                <li>Content-Manager</li>
-                <li>E-Commerce-Plattformen – sparen Zeit & Kosten für Content-Erstellung</li>
-                <li>Content-Teams – erhalten sofort veröffentlichungsfertige Texte</li>
+                <li>PIM/DAM system providers</li>
+                <li>Online shop operators</li>
+                <li>Content managers</li>
+                <li>E-commerce platforms – save time & costs for content creation</li>
+                <li>Content teams – receive publication-ready texts instantly</li>
             </ul>
         </section>
 
         <section>
-            <h2>🔒 Code & Kontakt</h2>
+            <h2>🔒 Code & Contact</h2>
             <p>
-                Der <strong>PIM-AI Connector</strong> wurde mit Java, Spring Boot und Angular als skalierbarer
-                Microservice
-                entwickelt.<br>
-                Dieses Projekt ist urheberrechtlich geschützt und steht unter einer privaten Lizenz.<br>
-                Eine Nutzung in Kundenprojekten, kommerzielle Weiterverwendung oder Integration in
-                PIM-/E-Commerce-Systeme ist
-                ausschließlich im Rahmen eines Lizenz- oder Kooperationsmodells möglich.<br><br>
-                👉 Bei Interesse an einer Lizenz, technischen Details oder einer Partnerschaft kontaktieren Sie uns
-                bitte direkt
-                unter:
+                The <strong>PIM-AI Connector</strong> was developed with Java, Spring Boot, and Angular as a scalable
+                microservice.<br>
+                This project is copyrighted and under a private license.<br>
+                Usage in customer projects, commercial reuse, or integration into PIM/e-commerce systems is
+                only possible within the framework of a licensing or cooperation model.<br><br>
+                👉 If you are interested in a license, technical details, or a partnership, please contact us directly
+                at:
                 <a href="mailto:n.thanh@gmx.de">n.thanh@gmx.de</a>
-            </p>
-
-            <p>
-                <a href="index-dev.html" style="font-weight: bold;">🔧 Zur Entwicklerdokumentation</a> – Detaillierte
-                Informationen zur Integration und Verwendung des PIM-AI-Connectors in eigenen Projekten.
             </p>
         </section>
 
@@ -286,11 +275,11 @@
 
     <footer>
         © 2025 DNguyen – PIM-AI Connector Demo<br>
-        <a href="index-en.html">🇬🇧 English Version</a> | <a href="index-dev.html">🔧 Entwicklerdokumentation</a>
+        <a href="/index.html">🇩🇪 Deutsche Version</a>
         <p style="font-size: 0.8rem; margin-top: 1rem;">
-            📄 Diese Web-Demo dient ausschließlich zu Demonstrations- und Informationszwecken.<br>
-            Der Quellcode und die Inhalte sind urheberrechtlich geschützt © 2025 DNguyen.<br>
-            Eine kommerzielle Nutzung oder Weiterverwendung ist ohne ausdrückliche Genehmigung nicht gestattet.
+            📄 This web demo is for demonstration and information purposes only.<br>
+            The source code and content are copyrighted © 2025 DNguyen.<br>
+            Commercial use or reuse is not permitted without explicit permission.
         </p>
     </footer>
 
@@ -300,50 +289,50 @@
         const produktTypInfo = document.getElementById("produktTypInfo");
         const responseArea = document.getElementById("responseArea");
 
-        // Demo-Daten für verschiedene Produkttypen
+        // Demo data for different product types
         const demoDaten = {
             "fashion": {
                 "p1": "Nike",
-                "p2": "Laufschuhe",
-                "p3": "Schwarz mit roten Akzenten",
-                "p4": "Synthetik und Mesh",
+                "p2": "Running Shoes",
+                "p3": "Black with red accents",
+                "p4": "Synthetic and mesh",
                 "p5": "EU 42",
-                "p6": "Sportlich",
+                "p6": "Sporty",
                 "p7": "Modern",
-                "p8": "Sport und Freizeit",
-                "p9": "Mit feuchtem Tuch abwischen",
+                "p8": "Sports and leisure",
+                "p9": "Wipe with damp cloth",
                 "p10": "Vietnam"
             },
             "electronics": {
                 "p1": "Samsung",
                 "p2": "Smartphone",
                 "p3": "Galaxy S25",
-                "p4": "6,7 Zoll AMOLED",
+                "p4": "6.7 inch AMOLED",
                 "p5": "256GB",
                 "p6": "Snapdragon 8 Gen 3",
                 "p7": "Android 14",
-                "p8": "24 Stunden",
-                "p9": "108MP Hauptkamera",
+                "p8": "24 hours",
+                "p9": "108MP main camera",
                 "p10": "WiFi 6, Bluetooth 5.3, 5G"
             },
             "furniture": {
                 "p1": "IKEA",
                 "p2": "Sofa",
-                "p3": "Dunkelgrau",
-                "p4": "Stoff, Holz",
-                "p5": "Skandinavisch",
+                "p3": "Dark gray",
+                "p4": "Fabric, wood",
+                "p5": "Scandinavian",
                 "p6": "220x90x85 cm",
                 "p7": "250 kg",
-                "p8": "Stoffbezug abnehmbar und waschbar",
-                "p9": "Einfache Montage ohne Werkzeug",
-                "p10": "10 Jahre Garantie"
+                "p8": "Removable and washable cover",
+                "p9": "Easy assembly without tools",
+                "p10": "10 year warranty"
             }
         };
 
-        // Aktiver Produkttyp
+        // Active product type
         let activeProduktTyp = "fashion";
 
-        // Konfiguration vom Server laden
+        // Load configuration from server
         async function loadConfig() {
             try {
                 const response = await fetch("/api/vision/config");
@@ -351,15 +340,15 @@
 
                 activeProduktTyp = config.produktTypId;
 
-                // Produkttyp-Info anzeigen
+                // Display product type info
                 produktTypInfo.innerHTML = `
-                    <strong>Aktiver Produkttyp:</strong> ${config.produktTypName} (ID: ${config.produktTypId})
+                    <strong>Active Product Type:</strong> ${config.produktTypName} (ID: ${config.produktTypId})
                 `;
 
-                // Parameter-Eingabefelder dynamisch erstellen
+                // Dynamically create parameter input fields
                 parameterForm.innerHTML = '';
 
-                // Demo-Daten für den aktuellen Produkttyp
+                // Demo data for the current product type
                 const typDemoDaten = demoDaten[config.produktTypId] || {};
 
                 for (let i = 1; i <= 10; i++) {
@@ -375,20 +364,20 @@
                 }
 
             } catch (err) {
-                console.error("Fehler beim Laden der Konfiguration:", err);
-                produktTypInfo.innerHTML = "⚠️ Fehler beim Laden der Konfiguration";
+                console.error("Error loading configuration:", err);
+                produktTypInfo.innerHTML = "⚠️ Error loading configuration";
 
-                // Notfall-Felder anzeigen, wenn Server nicht antwortet
+                // Display emergency fields if server doesn't respond
                 parameterForm.innerHTML = `
-                    <label>Parameter 1: <input type="text" name="p1" value="Demo-Wert 1" required /></label>
-                    <label>Parameter 2: <input type="text" name="p2" value="Demo-Wert 2" required /></label>
-                    <label>Parameter 3: <input type="text" name="p3" value="Demo-Wert 3" required /></label>
-                    <label>Parameter 4: <input type="text" name="p4" value="Demo-Wert 4" required /></label>
+                    <label>Parameter 1: <input type="text" name="p1" value="Demo Value 1" required /></label>
+                    <label>Parameter 2: <input type="text" name="p2" value="Demo Value 2" required /></label>
+                    <label>Parameter 3: <input type="text" name="p3" value="Demo Value 3" required /></label>
+                    <label>Parameter 4: <input type="text" name="p4" value="Demo Value 4" required /></label>
                 `;
             }
         }
 
-        // Beim Laden der Seite
+        // When page loads
         document.addEventListener('DOMContentLoaded', function () {
             loadConfig();
         });
@@ -396,26 +385,26 @@
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            // Parameter-Werte sammeln
+            // Collect parameter values
             const formData = new FormData(form);
             const payload = {};
 
-            // Alle Eingabefelder im Formular durchgehen
+            // Process all fields in the form
             for (const [key, value] of formData.entries()) {
                 payload[key] = value;
             }
 
-            // Leeres Bild-Feld senden
+            // Send empty image field
             payload.imageBase64 = "";
 
             sendRequest(payload);
         });
 
         async function sendRequest(payload) {
-            responseArea.textContent = "⏳ Anfrage wird gesendet...";
+            responseArea.textContent = "⏳ Sending request...";
 
             try {
-                // GPT-Endpunkt direkt verwenden, da keine Bilder gesendet werden
+                // Use GPT endpoint directly since no images are being sent
                 const res = await fetch("/api/enrich/gpt", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -424,7 +413,7 @@
                 const text = await res.text();
                 responseArea.textContent = text;
             } catch (err) {
-                responseArea.textContent = "❌ Fehler: " + err.message;
+                responseArea.textContent = "❌ Error: " + err.message;
             }
         }
     </script>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PIM-AI-Connector – Entwicklerdokumentation</title>
+    <meta name="description"
+        content="Technische Dokumentation für Entwickler, die den PIM-AI-Connector in ihre Anwendungen integrieren möchten." />
+    <meta name="author" content="DNguyen" />
+    <meta name="keywords"
+        content="PIM, API, Dokumentation, Integration, REST, OpenAI, Java, Microservices, Spring Boot" />
+    <!-- Favicons -->
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 1rem;
+            text-align: center;
+        }
+
+        header img {
+            max-width: 120px;
+            margin-bottom: 0.5rem;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin: 0.5rem 0;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            color: #d1dce5;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        nav {
+            background: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            margin: 0.5rem 1rem 0.5rem 0;
+        }
+
+        nav a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        section {
+            margin-bottom: 2.5rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            border-left: 4px solid #3498db;
+            padding-left: 0.5rem;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 1rem;
+            border-left: 5px solid #ffc107;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 1rem;
+            border-left: 5px solid #17a2b8;
+            border-radius: 4px;
+            margin: 1.5rem 0;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f4f4f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            color: #e83e8c;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            overflow-x: auto;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid #ddd;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #777;
+            padding: 2rem 1rem;
+        }
+
+        .endpoint {
+            background: #f4f4f4;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #3498db;
+            font-weight: bold;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            color: white;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .method.get {
+            background-color: #28a745;
+        }
+
+        .method.post {
+            background-color: #007bff;
+        }
+
+        .method.put {
+            background-color: #fd7e14;
+        }
+
+        .method.delete {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="/assets/pim-ai-logo.png" alt="PIM AI Logo" />
+        <h1>PIM-AI-Connector – Entwicklerdokumentation</h1>
+        <p>Technische Dokumentation für die Integration und Nutzung der API</p>
+    </header>
+
+    <main>
+        <nav>
+            <ul>
+                <li><a href="#getting-started">Erste Schritte</a></li>
+                <li><a href="#api">API-Referenz</a></li>
+                <li><a href="#configuration">Konfiguration</a></li>
+                <li><a href="#integration">Integration</a></li>
+                <li><a href="#examples">Beispiele</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="index.html">← Zurück zur Hauptseite</a></li>
+            </ul>
+        </nav>
+
+        <section id="getting-started">
+            <h2>🚀 Erste Schritte</h2>
+            <p>
+                Der PIM-AI-Connector ist eine leichtgewichtige Mikroservice-Lösung zur Anreicherung von Produktdaten
+                mit KI-generierten Beschreibungen und optionaler Bildanalyse. Diese Dokumentation richtet sich an
+                Entwickler, die den Connector in ihre bestehenden Systeme integrieren möchten.
+            </p>
+
+            <h3>Voraussetzungen</h3>
+            <ul>
+                <li>Java 17 oder höher</li>
+                <li>Internetzugang für die OpenAI API (und optional Google Vision API)</li>
+                <li>Docker (empfohlen für einfache Bereitstellung)</li>
+            </ul>
+
+            <h3>Installation</h3>
+            <p>Es gibt verschiedene Möglichkeiten, den PIM-AI-Connector zu installieren:</p>
+
+            <h4>1. Docker</h4>
+            <pre>docker pull dnguyen/pim-ai-connector-lite
+docker run -p 8080:8080 -e OPENAI_API_KEY=your_api_key -e ACTIVE_PRODUKTTYP_ID=fashion dnguyen/pim-ai-connector-lite</pre>
+
+            <h4>2. Docker Compose</h4>
+            <pre># docker-compose.yml
+version: '3'
+services:
+  pim-ai:
+    image: dnguyen/pim-ai-connector-lite
+    ports:
+      - "8080:8080"
+    environment:
+      - OPENAI_API_KEY=your_api_key
+      - GOOGLE_VISION_API_KEY=your_vision_api_key  # optional
+      - ACTIVE_PRODUKTTYP_ID=fashion</pre>
+
+            <h4>3. JAR-Datei</h4>
+            <pre>java -jar pim-ai-connector-lite.jar --OPENAI_API_KEY=your_api_key</pre>
+
+            <div class="note">
+                <strong>Hinweis:</strong> Für die Produktionsumgebung sollten Sie sicherstellen, dass Ihre API-Schlüssel
+                sicher verwaltet werden, z.B. durch Umgebungsvariablen oder eine sichere Konfigurationsdatei.
+            </div>
+        </section>
+
+        <section id="api">
+            <h2>🔌 API-Referenz</h2>
+            <p>
+                Der PIM-AI-Connector bietet eine REST-API zum Generieren von KI-basierten Produktbeschreibungen
+                und zur Analyse von Produktbildern.
+            </p>
+
+            <h3>Endpunkte</h3>
+
+            <div class="endpoint">
+                <span class="method get">GET</span> /api/vision/config
+            </div>
+            <p>Gibt die aktuelle Konfiguration des Systems zurück, einschließlich des aktiven Produkttyps und seiner
+                Parameter.</p>
+            <h4>Antwort</h4>
+            <pre>{
+  "produktTypId": "fashion",
+  "produktTypName": "Bekleidung",
+  "parameter": {
+    "p1": "Marke",
+    "p2": "Kategorie",
+    "p3": "Farbe",
+    "p4": "Material",
+    "p5": "Größe",
+    ...
+  }
+}</pre>
+
+            <div class="endpoint">
+                <span class="method post">POST</span> /api/enrich/gpt
+            </div>
+            <p>Generiert eine KI-basierte Produktbeschreibung basierend auf den übergebenen Parametern.</p>
+            <h4>Request</h4>
+            <pre>{
+  "p1": "Nike",
+  "p2": "Laufschuhe",
+  "p3": "Schwarz mit roten Akzenten",
+  "p4": "Synthetik und Mesh",
+  "p5": "EU 42",
+  ...
+}</pre>
+            <h4>Antwort</h4>
+            <pre>=== Produktbeschreibung (Bekleidung) ===
+Erleben Sie ultimativen Laufkomfort mit diesen Nike Laufschuhen in einem eleganten Schwarz mit dynamischen roten Akzenten. Das innovative Obermaterial aus Synthetik und Mesh sorgt für optimale Atmungsaktivität und Unterstützung, während die präzise EU 42 Größe für perfekten Sitz sorgt. 
+
+Diese sportlichen Schuhe verkörpern modernes Design und sind ideal für Sport und Freizeit geeignet. Die pflegeleichte Oberfläche lässt sich einfach mit einem feuchten Tuch abwischen. Hergestellt in Vietnam mit Nike's bewährten Qualitätsstandards, bieten diese Laufschuhe die perfekte Kombination aus Stil, Komfort und Leistung für Ihre aktiven Tage.</pre>
+
+            <div class="endpoint">
+                <span class="method post">POST</span> /api/vision/analyzeAndText
+            </div>
+            <p>Analysiert ein Bild und generiert eine KI-basierte Produktbeschreibung.</p>
+            <h4>Request</h4>
+            <pre>{
+  "p1": "Nike",
+  "p2": "Laufschuhe",
+  "p3": "Schwarz mit roten Akzenten",
+  "p4": "Synthetik und Mesh",
+  "p5": "EU 42",
+  ...
+  "imageBase64": "base64_encoded_image"
+}</pre>
+            <h4>Antwort</h4>
+            <pre>=== Google Vision Ergebnis ===
+NIKE
+RUNNING
+AIR MAX
+
+=== Produktbeschreibung (Bekleidung) ===
+Erleben Sie ultimativen Laufkomfort mit diesen Nike Air Max Laufschuhen in einem eleganten Schwarz mit dynamischen roten Akzenten. Das innovative Obermaterial aus Synthetik und Mesh sorgt für optimale Atmungsaktivität und Unterstützung, während die präzise EU 42 Größe für perfekten Sitz sorgt. 
+
+Diese sportlichen Schuhe verkörpern modernes Design und sind ideal für Sport und Freizeit geeignet. Die pflegeleichte Oberfläche lässt sich einfach mit einem feuchten Tuch abwischen. Hergestellt in Vietnam mit Nike's bewährten Qualitätsstandards, bieten diese Laufschuhe die perfekte Kombination aus Stil, Komfort und Leistung für Ihre aktiven Tage.</pre>
+        </section>
+
+        <section id="configuration">
+            <h2>⚙️ Konfiguration</h2>
+            <p>
+                Der PIM-AI-Connector kann über verschiedene Konfigurationsoptionen angepasst werden. Die Konfiguration
+                erfolgt über Umgebungsvariablen, die beim Start der Anwendung gesetzt werden können.
+            </p>
+
+            <h3>Umgebungsvariablen</h3>
+            <table>
+                <tr>
+                    <th>Variable</th>
+                    <th>Beschreibung</th>
+                    <th>Standard</th>
+                </tr>
+                <tr>
+                    <td>PORT</td>
+                    <td>Der Port, auf dem der Server läuft</td>
+                    <td>8080</td>
+                </tr>
+                <tr>
+                    <td>OPENAI_API_KEY</td>
+                    <td>Ihr OpenAI API-Schlüssel (erforderlich)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>GOOGLE_VISION_API_KEY</td>
+                    <td>Ihr Google Vision API-Schlüssel (optional für Bildanalyse)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>ACTIVE_PRODUKTTYP_ID</td>
+                    <td>ID des aktiven Produkttyps (fashion, electronics, furniture)</td>
+                    <td>fashion</td>
+                </tr>
+            </table>
+
+            <h3>Produkttyp-Konfiguration</h3>
+            <p>
+                Die Produkttypen und ihre Parameter werden in der Datei <code>pim-config.xml</code> definiert. Sie
+                können
+                diese Datei anpassen, um eigene Produkttypen und Parameter hinzuzufügen.
+            </p>
+
+            <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;pim-configuration&gt;
+    &lt;produkttypen&gt;
+        &lt;produkttyp id="fashion"&gt;
+            &lt;n&gt;Bekleidung&lt;/n&gt;
+            &lt;parameter&gt;
+                &lt;p1&gt;Marke&lt;/p1&gt;
+                &lt;p2&gt;Kategorie&lt;/p2&gt;
+                &lt;p3&gt;Farbe&lt;/p3&gt;
+                &lt;!-- weitere Parameter --&gt;
+            &lt;/parameter&gt;
+            &lt;prompt-template&gt;
+                Erstelle eine detaillierte Produktbeschreibung für ein Kleidungsstück mit folgenden Merkmalen:
+                - Marke: {p1}
+                - Kategorie: {p2}
+                - Farbe: {p3}
+                <!-- weitere Parameter -->
+                
+                Die Beschreibung sollte modisch und ansprechend sein und die Vorzüge des Kleidungsstücks hervorheben.
+            &lt;/prompt-template&gt;
+        &lt;/produkttyp&gt;
+        &lt;!-- weitere Produkttypen --&gt;
+    &lt;/produkttypen&gt;
+&lt;/pim-configuration&gt;</pre>
+
+            <div class="info">
+                <strong>Tipp:</strong> Sie können den aktiven Produkttyp zur Laufzeit über die Umgebungsvariable
+                <code>ACTIVE_PRODUKTTYP_ID</code> ändern, ohne die Anwendung neu starten zu müssen.
+            </div>
+        </section>
+
+        <section id="integration">
+            <h2>🔄 Integration</h2>
+            <p>
+                Der PIM-AI-Connector kann auf verschiedene Weise in Ihre bestehenden Systeme integriert werden.
+            </p>
+
+            <h3>Integration in PIM-Systeme</h3>
+            <p>
+                Für die Integration in PIM-Systeme können Sie einen regelmäßigen Prozess einrichten, der neue oder
+                aktualisierte Produkte aus Ihrem PIM-System exportiert und an die API des PIM-AI-Connectors sendet.
+                Die generierten Beschreibungen können dann zurück in Ihr PIM-System importiert werden.
+            </p>
+            <pre>// Beispiel-Code für einen Batch-Prozess
+function enrichProducts() {
+    const products = fetchProductsFromPIM();
+    
+    for (const product of products) {
+        const params = mapProductToParams(product);
+        const response = await fetch('http://your-connector-url/api/enrich/gpt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(params)
+        });
+        
+        const enrichedDescription = await response.text();
+        updateProductInPIM(product.id, enrichedDescription);
+    }
+}</pre>
+
+            <h3>Integration in E-Commerce-Systeme</h3>
+            <p>
+                Für E-Commerce-Systeme können Sie den PIM-AI-Connector in Ihren Produkterstellungs- oder
+                Produktbearbeitungsprozess integrieren, um automatisch Beschreibungen zu generieren.
+            </p>
+            <pre>// Beispiel für eine Integration in ein Produktformular
+document.getElementById('generate-description').addEventListener('click', async () => {
+    const params = {
+        p1: document.getElementById('brand').value,
+        p2: document.getElementById('category').value,
+        p3: document.getElementById('color').value,
+        // weitere Parameter
+    };
+    
+    const response = await fetch('http://your-connector-url/api/enrich/gpt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+    });
+    
+    const enrichedDescription = await response.text();
+    document.getElementById('description').value = enrichedDescription;
+});</pre>
+
+            <h3>Middleware-Integration</h3>
+            <p>
+                Sie können den PIM-AI-Connector auch als Middleware zwischen verschiedenen Systemen einsetzen,
+                z.B. zwischen einem PIM- und einem E-Commerce-System.
+            </p>
+
+            <div class="note">
+                <strong>Hinweis:</strong> Für eine nahtlose Integration können Sie auch die
+                Docker-Container-Orchestrierung
+                (z.B. Kubernetes) nutzen, um den PIM-AI-Connector als Teil Ihrer Microservice-Architektur
+                bereitzustellen.
+            </div>
+        </section>
+
+        <section id="examples">
+            <h2>📝 Beispiele</h2>
+            <p>
+                Hier finden Sie einige Beispiele für die Verwendung des PIM-AI-Connectors in verschiedenen Szenarien.
+            </p>
+
+            <h3>Beispiel 1: Einfache Produktbeschreibung generieren</h3>
+            <pre>curl -X POST http://localhost:8080/api/enrich/gpt \
+-H "Content-Type: application/json" \
+-d '{
+  "p1": "Nike",
+  "p2": "Laufschuhe",
+  "p3": "Schwarz mit roten Akzenten",
+  "p4": "Synthetik und Mesh",
+  "p5": "EU 42"
+}'</pre>
+
+            <h3>Beispiel 2: Produktbeschreibung mit Bildanalyse</h3>
+            <pre>// Bild in Base64 konvertieren
+const fileInput = document.getElementById('image-input');
+const file = fileInput.files[0];
+const reader = new FileReader();
+
+reader.onload = async () => {
+    const base64Image = reader.result.split(',')[1];
+    
+    const payload = {
+        p1: "Samsung",
+        p2: "Smartphone",
+        p3: "Galaxy S25",
+        p4: "6,7 Zoll AMOLED",
+        p5: "256GB",
+        imageBase64: base64Image
+    };
+    
+    const response = await fetch('http://localhost:8080/api/vision/analyzeAndText', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    
+    const result = await response.text();
+    console.log(result);
+};
+
+reader.readAsDataURL(file);</pre>
+
+            <h3>Beispiel 3: Konfiguration abfragen</h3>
+            <pre>fetch('http://localhost:8080/api/vision/config')
+    .then(response => response.json())
+    .then(config => {
+        console.log('Aktiver Produkttyp:', config.produktTypName);
+        console.log('Parameter:', config.parameter);
+    });</pre>
+        </section>
+
+        <section id="faq">
+            <h2>❓ Häufig gestellte Fragen</h2>
+
+            <h3>Welche API-Schlüssel benötige ich?</h3>
+            <p>
+                Für die Grundfunktionalität benötigen Sie einen OpenAI API-Schlüssel. Wenn Sie auch die
+                Bildanalyse-Funktion nutzen möchten, benötigen Sie zusätzlich einen Google Vision API-Schlüssel.
+            </p>
+
+            <h3>Wie kann ich eigene Produkttypen hinzufügen?</h3>
+            <p>
+                Sie können eigene Produkttypen in der Datei <code>pim-config.xml</code> definieren. Jeder Produkttyp
+                besteht aus einem Namen, einer Liste von Parametern und einer Vorlage für den Prompt, der an die
+                OpenAI API gesendet wird.
+            </p>
+
+            <h3>Wie kann ich die Prompts anpassen?</h3>
+            <p>
+                Die Prompts können in der <code>pim-config.xml</code> Datei angepasst werden. Jeder Produkttyp hat
+                einen eigenen <code>prompt-template</code>, der die Anweisungen für die KI enthält. Sie können
+                diesen Text anpassen, um spezifischere oder anders gestaltete Beschreibungen zu erhalten.
+            </p>
+
+            <h3>Welche Größenbeschränkungen gibt es für Bilder?</h3>
+            <p>
+                Die maximale Größe für Bilder beträgt 5 MB. Größere Bilder werden abgelehnt.
+            </p>
+
+            <h3>Kann ich den PIM-AI-Connector in andere Sprachen integrieren?</h3>
+            <p>
+                Ja, Sie können den PIM-AI-Connector in jede Anwendung integrieren, die HTTP-Anfragen senden kann.
+                Die API ist sprachunabhängig und kann mit JavaScript, Python, PHP, Ruby, C# usw. verwendet werden.
+            </p>
+
+            <h3>Wie kann ich die Leistung verbessern?</h3>
+            <p>
+                Für eine bessere Leistung können Sie den PIM-AI-Connector horizontal skalieren, indem Sie mehrere
+                Instanzen hinter einem Load Balancer betreiben. Außerdem können Sie die Ergebnisse cachen, um
+                wiederholte Anfragen zu vermeiden.
+            </p>
+
+            <div class="info">
+                <strong>Hinweis:</strong> Falls Sie weitere Fragen haben, wenden Sie sich bitte an unseren Support
+                unter <a href="mailto:n.thanh@gmx.de">n.thanh@gmx.de</a>.
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        © 2025 DNguyen – PIM-AI Connector Dokumentation<br>
+        <a href="index.html">← Zurück zur Hauptseite</a> | <a href="index-en.html">🇬🇧 English Version</a>
+        <p style="font-size: 0.8rem; margin-top: 1rem;">
+            📄 Diese Dokumentation dient ausschließlich zu Informationszwecken.<br>
+            Der Quellcode und die Inhalte sind urheberrechtlich geschützt © 2025 DNguyen.<br>
+            Eine kommerzielle Nutzung oder Weiterverwendung ist ohne ausdrückliche Genehmigung nicht gestattet.
+        </p>
+    </footer>
+</body>
+
+</html>

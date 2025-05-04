@@ -6,15 +6,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
-@RequiredArgsConstructor
 public class VisionService {
+
+  private static final Logger logger = LoggerFactory.getLogger(VisionService.class);
 
   @Value("${google.vision.api-key}")
   private String apiKey;
 
-  private final RestTemplate restTemplate = new RestTemplate();
+  @Value("${OPENAI_API_KEY:demo}")
+  private String openAiKey;
+
+  private final RestTemplate restTemplate;
+  private final ConfigService configService;
+
+  public VisionService(ConfigService configService) {
+    this.configService = configService;
+    this.restTemplate = new RestTemplate();
+  }
 
   public String analyzeImage(byte[] imageBytes) {
     try {
@@ -46,17 +58,47 @@ public class VisionService {
       return textAnnotation.get("text").toString().trim();
 
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Fehler bei der Bildanalyse: " + e.getMessage(), e);
       return "❌ Fehler bei der Bildanalyse: " + e.getMessage();
     }
   }
 
-  public String generateGptDescription(String marke, String produktart, String farbe, String material) {
-    // Hier wird später OpenAI/GPT angebunden – aktuell Dummy-Text
-    return String.format(
-        "Die %s der Marke %s in der Farbe %s bestehen aus %s. " +
-            "Sie bieten Komfort und Stil für den Alltag oder Sport.",
-        produktart, marke, farbe, material);
+  public String generateGptDescription(Map<String, String> paramValues) {
+    try {
+      // GPT-Prompt aus der Konfiguration generieren
+      String prompt = configService.generatePrompt(paramValues);
+      logger.info("Generiere GPT-Beschreibung mit Prompt: {}", prompt);
 
+      Map<String, Object> requestBody = Map.of(
+          "model", "gpt-3.5-turbo",
+          "messages", List.of(
+              Map.of("role", "user", "content", prompt)),
+          "max_tokens", 350,
+          "temperature", 0.7);
+
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.APPLICATION_JSON);
+      headers.setBearerAuth(openAiKey);
+
+      HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+      ResponseEntity<Map> response = restTemplate.postForEntity(
+          "https://api.openai.com/v1/chat/completions",
+          entity,
+          Map.class);
+
+      List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
+      if (choices != null && !choices.isEmpty()) {
+        Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+        if (message != null && message.containsKey("content")) {
+          return message.get("content").toString().trim();
+        }
+      }
+
+      return "⚠️ Keine Antwort von GPT erhalten.";
+    } catch (Exception e) {
+      logger.error("Fehler bei der GPT-Anfrage: " + e.getMessage(), e);
+      return "❌ Fehler bei der GPT-Anfrage: " + e.getMessage();
+    }
   }
 }

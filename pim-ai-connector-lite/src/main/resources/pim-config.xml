@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pim-configuration>
+    <produkttypen>
+        <produkttyp id="fashion">
+            <n>Bekleidung</n>
+            <parameter>
+                <p1>Marke</p1>
+                <p2>Kategorie</p2>
+                <p3>Farbe</p3>
+                <p4>Material</p4>
+                <p5>Größe</p5>
+                <p6>Muster</p6>
+                <p7>Stil</p7>
+                <p8>Anlass</p8>
+                <p9>Pflegehinweise</p9>
+                <p10>Herkunftsland</p10>
+            </parameter>
+            <prompt-template>
+                Erstelle eine detaillierte Produktbeschreibung für ein Kleidungsstück mit folgenden Merkmalen:
+                - Marke: {p1}
+                - Kategorie: {p2}
+                - Farbe: {p3}
+                - Material: {p4}
+                - Größe: {p5}
+                - Muster: {p6}
+                - Stil: {p7}
+                - Anlass: {p8}
+                - Pflegehinweise: {p9}
+                - Herkunftsland: {p10}
+
+                Die Beschreibung sollte modisch und ansprechend sein und die Vorzüge des Kleidungsstücks hervorheben.
+            </prompt-template>
+        </produkttyp>
+        
+        <produkttyp id="electronics">
+            <n>Elektronik</n>
+            <parameter>
+                <p1>Marke</p1>
+                <p2>Produktart</p2>
+                <p3>Modell</p3>
+                <p4>Displaygröße</p4>
+                <p5>Speicher</p5>
+                <p6>Prozessor</p6>
+                <p7>Betriebssystem</p7>
+                <p8>Akkulaufzeit</p8>
+                <p9>Kamera</p9>
+                <p10>Konnektivität</p10>
+            </parameter>
+            <prompt-template>
+                Erstelle eine überzeugende Produktbeschreibung für folgendes Elektronikgerät:
+                - Marke: {p1}
+                - Produktart: {p2}
+                - Modell: {p3}
+                - Display: {p4}
+                - Speicher: {p5}
+                - Prozessor: {p6}
+                - Betriebssystem: {p7}
+                - Akkulaufzeit: {p8}
+                - Kamera: {p9}
+                - Konnektivität: {p10}
+
+                Die Beschreibung sollte die technischen Vorzüge und die Benutzerfreundlichkeit betonen und die Zielgruppe technikaffiner Nutzer ansprechen.
+            </prompt-template>
+        </produkttyp>
+        
+        <produkttyp id="furniture">
+            <n>Möbel</n>
+            <parameter>
+                <p1>Marke</p1>
+                <p2>Möbeltyp</p2>
+                <p3>Farbe</p3>
+                <p4>Material</p4>
+                <p5>Stil</p5>
+                <p6>Abmessungen</p6>
+                <p7>Belastbarkeit</p7>
+                <p8>Pflege</p8>
+                <p9>Montage</p9>
+                <p10>Garantie</p10>
+            </parameter>
+            <prompt-template>
+                Erstelle eine ansprechende Produktbeschreibung für folgendes Möbelstück:
+                - Marke: {p1}
+                - Möbeltyp: {p2}
+                - Farbe: {p3}
+                - Material: {p4}
+                - Stil: {p5}
+                - Abmessungen: {p6}
+                - Belastbarkeit: {p7}
+                - Pflege: {p8}
+                - Montage: {p9}
+                - Garantie: {p10}
+
+                Die Beschreibung sollte die Qualität, die Ästhetik und den praktischen Nutzen des Möbelstücks hervorheben und als ideale Ergänzung für moderne Wohnräume präsentieren.
+            </prompt-template>
+        </produkttyp>
+    </produkttypen>
+</pim-configuration>

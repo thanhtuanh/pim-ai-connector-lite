@@ -1,62 +1,98 @@
 package com.dnguyen.pes.controller;
 
+import com.dnguyen.pes.dto.ProduktTypParameter;
+import com.dnguyen.pes.service.ConfigService;
 import com.dnguyen.pes.service.VisionService;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/vision")
-@RequiredArgsConstructor
 public class VisionController {
 
+    private static final Logger logger = LoggerFactory.getLogger(VisionController.class);
     private final VisionService visionService;
+    private final ConfigService configService;
 
-    @Value("${google.vision.api-key}")
-    private String apiKey;
+    public VisionController(VisionService visionService, ConfigService configService) {
+        this.visionService = visionService;
+        this.configService = configService;
+    }
+
+    @GetMapping("/config")
+    public ResponseEntity<Map<String, Object>> getConfig() {
+        logger.info("Konfiguration angefordert");
+        Map<String, Object> config = new HashMap<>();
+        config.put("produktTypId", configService.getActiveProduktTypId());
+        config.put("produktTypName", configService.getProduktTypName());
+        config.put("parameter", configService.getParameterMap());
+        return ResponseEntity.ok(config);
+    }
 
     @PostMapping("/analyzeAndText")
-    public ResponseEntity<String> analyzeImageWithText(@RequestBody Map<String, String> request) {
+    public ResponseEntity<String> analyzeImageWithText(@RequestBody ProduktTypParameter request) {
         try {
-            String base64Image = request.get("imageBase64");
-            if (base64Image == null || base64Image.isEmpty()) {
-                return ResponseEntity.badRequest().body("⚠️ Kein Bild übermittelt.");
-            }
-
-            // Base64 säubern
-            if (base64Image.contains(",")) {
-                base64Image = base64Image.split(",")[1];
-            }
-            base64Image = base64Image.replaceAll("[^A-Za-z0-9+/=]", "");
-
-            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-
-            // Aufruf Vision API
-            String visionResult = visionService.analyzeImage(imageBytes);
-
-            // GPT Prompt vorbereiten
-            String marke = request.getOrDefault("marke", "");
-            String produktart = request.getOrDefault("produktart", "");
-            String farbe = request.getOrDefault("farbe", "");
-            String material = request.getOrDefault("material", "");
-
-            String gptText = visionService.generateGptDescription(marke, produktart, farbe, material);
-
-            // Antwort kombinieren
+            logger.info("Bild- und Text-Analyse angefordert");
             StringBuilder response = new StringBuilder();
-            response.append("=== Google Vision Ergebnis ===\n")
-                    .append(visionResult).append("\n\n")
-                    .append("=== GPT Produktbeschreibung ===\n")
+            Map<String, String> paramValues = new HashMap<>();
+
+            // Parameter-Werte in eine Map umwandeln
+            if (request.getP1() != null)
+                paramValues.put("p1", request.getP1());
+            if (request.getP2() != null)
+                paramValues.put("p2", request.getP2());
+            if (request.getP3() != null)
+                paramValues.put("p3", request.getP3());
+            if (request.getP4() != null)
+                paramValues.put("p4", request.getP4());
+            if (request.getP5() != null)
+                paramValues.put("p5", request.getP5());
+            if (request.getP6() != null)
+                paramValues.put("p6", request.getP6());
+            if (request.getP7() != null)
+                paramValues.put("p7", request.getP7());
+            if (request.getP8() != null)
+                paramValues.put("p8", request.getP8());
+            if (request.getP9() != null)
+                paramValues.put("p9", request.getP9());
+            if (request.getP10() != null)
+                paramValues.put("p10", request.getP10());
+
+            // Wenn Bild vorhanden ist, Vision API aufrufen
+            String base64Image = request.getImageBase64();
+            if (base64Image != null && !base64Image.isEmpty()) {
+                logger.info("Bildanalyse wird durchgeführt");
+                // Base64 säubern
+                if (base64Image.contains(",")) {
+                    base64Image = base64Image.split(",")[1];
+                }
+                base64Image = base64Image.replaceAll("[^A-Za-z0-9+/=]", "");
+
+                byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+
+                // Aufruf Vision API
+                String visionResult = visionService.analyzeImage(imageBytes);
+
+                response.append("=== Google Vision Ergebnis ===\n")
+                        .append(visionResult).append("\n\n");
+            } else {
+                logger.info("Keine Bildanalyse - nur Text-Generierung");
+            }
+
+            // GPT-Beschreibung generieren
+            String gptText = visionService.generateGptDescription(paramValues);
+            response.append("=== Produktbeschreibung (" + configService.getProduktTypName() + ") ===\n")
                     .append(gptText);
 
             return ResponseEntity.ok(response.toString());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Fehler bei der Verarbeitung: " + e.getMessage(), e);
             return ResponseEntity.internalServerError().body("❌ Fehler bei der Verarbeitung: " + e.getMessage());
         }
     }
