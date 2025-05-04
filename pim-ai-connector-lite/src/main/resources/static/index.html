@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>pim-ai-connector-lite – Bild & GPT Analyse</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+        }
+
+        label {
+            display: block;
+            margin: 12px 0 6px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+        }
+
+        button {
+            margin-top: 16px;
+            padding: 10px 20px;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #f8f8f8;
+            padding: 16px;
+            border: 1px solid #ccc;
+            white-space: pre-line;
+        }
+
+        .preview-container img {
+            max-width: 300px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧠 GPT & 📷 Vision Analyse</h1>
+
+    <form id="analyzeForm">
+        <label>Marke: <input type="text" name="marke" value="Adidas" required /></label>
+        <label>Produktart: <input type="text" name="produktart" value="Sportschuhe" required /></label>
+        <label>Farbe: <input type="text" name="farbe" value="Weiß / Blau" required /></label>
+        <label>Material: <input type="text" name="material" value="Leder und Textil" required /></label>
+        <label>Bild: <input type="file" id="imageInput" accept="image/*" required /></label>
+
+        <div class="preview-container">
+            <img id="imagePreview" alt="Bildvorschau" style="display: none;" />
+        </div>
+
+        <button type="submit">Analyse starten</button>
+    </form>
+
+    <h2>Ergebnis:</h2>
+    <pre id="responseArea">Noch keine Antwort...</pre>
+
+    <script>
+        const form = document.getElementById("analyzeForm");
+        const responseArea = document.getElementById("responseArea");
+        const imageInput = document.getElementById("imageInput");
+        const imagePreview = document.getElementById("imagePreview");
+
+        imageInput.addEventListener("change", () => {
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    imagePreview.src = reader.result;
+                    imagePreview.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const file = imageInput.files[0];
+            if (!file) {
+                responseArea.textContent = "⚠️ Bitte wähle ein Bild aus.";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async () => {
+                const base64Image = reader.result.split(",")[1];
+                const formData = new FormData(form);
+                const payload = {
+                    marke: formData.get("marke"),
+                    produktart: formData.get("produktart"),
+                    farbe: formData.get("farbe"),
+                    material: formData.get("material"),
+                    imageBase64: base64Image
+                };
+
+                responseArea.textContent = "⏳ Anfrage wird gesendet...";
+
+                try {
+                    const res = await fetch("/api/vision/analyzeAndText", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    const text = await res.text();
+                    responseArea.textContent = text;
+                } catch (err) {
+                    responseArea.textContent = "❌ Fehler: " + err.message;
+                }
+            };
+
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+
+</html>

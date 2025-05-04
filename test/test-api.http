@@ -1,0 +1,24 @@
+### Test: Demo-Antwort von /api/enrich
+POST http://localhost:8080/api/enrich
+Content-Type: application/json
+
+{
+  "marke": "HUGO BOSS",
+  "produktart": "Hemd",
+  "farbe": "weiß",
+  "material": "Baumwolle"
+}
+
+###
+
+### Test: GPT-Antwort von /api/enrich/gpt
+POST http://localhost:8080/api/enrich/gpt
+Content-Type: application/json
+
+{
+  "marke": "HUGO BOSS",
+  "produktart": "Hemd",
+  "farbe": "weiß",
+  "material": "Baumwolle"
+}
+
