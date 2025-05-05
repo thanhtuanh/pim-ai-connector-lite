@@ -138,6 +138,58 @@
             border-radius: 5px;
             margin-bottom: 15px;
         }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+
+        .tab.active {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .image-upload-container {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .image-upload-container:hover {
+            border-color: #3498db;
+        }
+
+        .image-preview {
+            max-width: 300px;
+            max-height: 200px;
+            margin: 10px auto;
+            display: none;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .option-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .option-buttons button {
+            width: 49%;
+        }
     </style>
 </head>
 
@@ -193,20 +245,38 @@
         </section>
 
         <section>
-            <h2>🔠 Produktbeschreibung generieren</h2>
+            <h2>🔠 🔗 Live-Demo Produktbeschreibung generieren</h2>
             <p>
                 Mit unserem PIM-AI Connector können Sie sofort hochwertige Produktbeschreibungen erstellen.
                 Wählen Sie einen der vordefinierten Produkttypen und geben Sie die entsprechenden Parameter ein.
+                Optional können Sie auch ein Bild hochladen für erweiterte KI-Analyse mit Google Vision.
             </p>
 
             <div class="info-box" id="produktTypInfo"></div>
 
+            <div class="tabs">
+                <div class="tab active" id="tab-text">Nur Text</div>
+                <div class="tab" id="tab-image">Mit Bildanalyse</div>
+            </div>
+
             <form id="analyzeForm">
+                <div id="image-upload-section" style="display: none;">
+                    <div class="image-upload-container" id="dropArea">
+                        <p>📷 Produktbild hier ablegen oder klicken zum Auswählen</p>
+                        <input type="file" id="fileInput" class="file-input" accept="image/*">
+                        <img id="imagePreview" class="image-preview" src="#" alt="Bildvorschau">
+                    </div>
+                    <p id="imageStatus" style="font-size: 0.9rem; color: #555; text-align: center;"></p>
+                </div>
+
                 <div class="parameter-form" id="parameterForm">
                     <!-- Parameter werden dynamisch geladen -->
                 </div>
 
-                <button type="submit">Beschreibung generieren</button>
+                <div class="option-buttons">
+                    <button type="submit" id="generateBtn">Beschreibung generieren</button>
+                    <button type="button" id="resetBtn" style="background-color: #6c757d;">Zurücksetzen</button>
+                </div>
             </form>
 
             <h3>Ergebnis:</h3>
@@ -214,19 +284,9 @@
         </section>
 
         <section>
-            <h2>🔗 Live-Demo API-Endpunkt</h2>
-            <p>Endpunkt für KI-basierte Produktbeschreibung:<br />
-                <code>/api/enrich/gpt</code>
-            </p>
-            <div class="note">
-                <strong>Wichtig:</strong> Dieser Endpunkt ist ein <u>POST-Endpunkt</u> und <u>nicht direkt im Browser
-                    aufrufbar</u>.
-                Bitte verwenden Sie ein Tool wie <code>curl</code> oder Postman.
-            </div>
-        </section>
+            <h2>💻 Beispiel cURL Requests</h2>
 
-        <section>
-            <h2>💻 Beispiel cURL Request</h2>
+            <h3>Ohne Bild:</h3>
             <pre>curl -X POST http://localhost:8080/api/enrich/gpt \
 -H "Content-Type: application/json" \
 -d '{
@@ -235,6 +295,18 @@
   "p3": "Schwarz mit roten Akzenten",
   "p4": "Synthetik und Mesh",
   "p5": "EU 42"
+}'</pre>
+
+            <h3>Mit Bild:</h3>
+            <pre>curl -X POST http://localhost:8080/api/vision/analyzeAndText \
+-H "Content-Type: application/json" \
+-d '{
+  "p1": "Nike",
+  "p2": "Laufschuhe",
+  "p3": "Schwarz mit roten Akzenten",
+  "p4": "Synthetik und Mesh",
+  "p5": "EU 42",
+  "imageBase64": "BASE64_ENCODED_IMAGE_DATA"
 }'</pre>
         </section>
 
@@ -299,6 +371,94 @@
         const parameterForm = document.getElementById("parameterForm");
         const produktTypInfo = document.getElementById("produktTypInfo");
         const responseArea = document.getElementById("responseArea");
+        const tabText = document.getElementById("tab-text");
+        const tabImage = document.getElementById("tab-image");
+        const imageUploadSection = document.getElementById("image-upload-section");
+        const dropArea = document.getElementById("dropArea");
+        const fileInput = document.getElementById("fileInput");
+        const imagePreview = document.getElementById("imagePreview");
+        const imageStatus = document.getElementById("imageStatus");
+        const resetBtn = document.getElementById("resetBtn");
+        const generateBtn = document.getElementById("generateBtn");
+
+        // Aktivieren und deaktivieren der Bildupload-Funktionalität
+        let isImageAnalysisActive = false;
+        let base64Image = "";
+
+        tabText.addEventListener("click", function () {
+            tabText.classList.add("active");
+            tabImage.classList.remove("active");
+            imageUploadSection.style.display = "none";
+            isImageAnalysisActive = false;
+            generateBtn.textContent = "Beschreibung generieren";
+        });
+
+        tabImage.addEventListener("click", function () {
+            tabText.classList.remove("active");
+            tabImage.classList.add("active");
+            imageUploadSection.style.display = "block";
+            isImageAnalysisActive = true;
+            generateBtn.textContent = "Bild analysieren & Beschreibung generieren";
+        });
+
+        // Drag & Drop und Bildupload
+        dropArea.addEventListener("click", function () {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener("change", function () {
+            handleFiles(this.files);
+        });
+
+        dropArea.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea.style.borderColor = "#3498db";
+        });
+
+        dropArea.addEventListener("dragleave", function () {
+            dropArea.style.borderColor = "#ccc";
+        });
+
+        dropArea.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropArea.style.borderColor = "#ccc";
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (!file.type.match('image.*')) {
+                    imageStatus.textContent = "❌ Bitte nur Bilddateien hochladen (JPG, PNG, etc.)";
+                    return;
+                }
+
+                // Größenbeschränkung (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    imageStatus.textContent = "❌ Die Bilddatei ist zu groß (maximal 5 MB erlaubt)";
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = "block";
+                    base64Image = e.target.result.split(',')[1]; // Base64 ohne MIME-Typ-Header
+                    imageStatus.textContent = "✅ Bild erfolgreich geladen: " + file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Zurücksetzen-Button
+        resetBtn.addEventListener("click", function () {
+            form.reset();
+            imagePreview.style.display = "none";
+            base64Image = "";
+            imageStatus.textContent = "";
+            responseArea.textContent = "Formular zurückgesetzt. Noch keine Anfrage gesendet.";
+            loadConfig(); // Lade Standardwerte
+        });
 
         // Demo-Daten für verschiedene Produkttypen
         const demoDaten = {
@@ -405,10 +565,15 @@
                 payload[key] = value;
             }
 
-            // Leeres Bild-Feld senden
-            payload.imageBase64 = "";
+            // Base64-Bild hinzufügen, wenn vorhanden
+            payload.imageBase64 = base64Image;
 
-            sendRequest(payload);
+            // Entscheiden, welcher Endpunkt verwendet wird
+            if (isImageAnalysisActive && base64Image) {
+                sendRequestWithImage(payload);
+            } else {
+                sendRequest(payload);
+            }
         });
 
         async function sendRequest(payload) {
@@ -425,6 +590,23 @@
                 responseArea.textContent = text;
             } catch (err) {
                 responseArea.textContent = "❌ Fehler: " + err.message;
+            }
+        }
+
+        async function sendRequestWithImage(payload) {
+            responseArea.textContent = "⏳ Bild wird analysiert und Beschreibung wird generiert...";
+
+            try {
+                // Bild-Analyse-Endpunkt verwenden
+                const res = await fetch("/api/vision/analyzeAndText", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const text = await res.text();
+                responseArea.textContent = text;
+            } catch (err) {
+                responseArea.textContent = "❌ Fehler bei der Bildanalyse: " + err.message;
             }
         }
     </script>
