@@ -190,6 +190,32 @@
         .option-buttons button {
             width: 49%;
         }
+
+        .api-key-input {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .api-key-input input {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+            width: 150px;
+        }
+
+        .api-key-input button {
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+        }
     </style>
 </head>
 
@@ -199,7 +225,9 @@
         <h1>PIM-AI-Connector – KI-basierte Texte für Produktdaten</h1>
         <p>Ideal für PIM, DAM, Onlineshops und digitale Kataloge</p>
 
-        <div style="position: absolute; top: 1rem; right: 1rem;">
+        <div class="api-key-input">
+            <input type="text" id="api-key-input" placeholder="API-Key" value="demo-key">
+            <button id="save-api-key">Speichern</button>
         </div>
     </header>
 
@@ -244,15 +272,38 @@
             </div>
         </section>
 
+        <!-- Aktualisierter Abschnitt "Live-Demo Produktbeschreibung generieren" -->
         <section>
             <h2>🔠 🔗 Live-Demo Produktbeschreibung generieren</h2>
             <p>
                 Mit unserem PIM-AI Connector können Sie sofort hochwertige Produktbeschreibungen erstellen.
-                Wählen Sie einen der vordefinierten Produkttypen und geben Sie die entsprechenden Parameter ein.
+                Wählen Sie einen der Produkttypen aus der Liste und geben Sie die entsprechenden Parameter ein.
                 Optional können Sie auch ein Bild hochladen für erweiterte KI-Analyse mit Google Vision.
             </p>
 
-            <div class="info-box" id="produktTypInfo"></div>
+            <div class="language-selector" style="margin-bottom: 15px;">
+                <label for="language-select">Sprache wählen:</label>
+                <select id="language-select"
+                    style="padding: 5px; margin-left: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="de">Deutsch</option>
+                    <option value="en">English</option>
+                </select>
+                <button id="language-switch-btn"
+                    style="padding: 5px 10px; margin-left: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Sprache
+                    anwenden</button>
+            </div>
+
+            <div class="info-box" id="produktTypInfo">
+                <!-- Produkttyp-Info wird hier angezeigt -->
+            </div>
+
+            <div class="product-type-selector" style="margin-bottom: 15px;">
+                <label for="product-type-select"><strong>Produkttyp auswählen:</strong></label>
+                <select id="product-type-select"
+                    style="padding: 8px; width: 100%; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                    <!-- Produkttypen werden dynamisch geladen -->
+                </select>
+            </div>
 
             <div class="tabs">
                 <div class="tab active" id="tab-text">Nur Text</div>
@@ -289,6 +340,7 @@
             <h3>Ohne Bild:</h3>
             <pre>curl -X POST http://localhost:8080/api/enrich/gpt \
 -H "Content-Type: application/json" \
+-H "X-API-Key: demo-key" \
 -d '{
   "p1": "Nike",
   "p2": "Laufschuhe",
@@ -300,6 +352,7 @@
             <h3>Mit Bild:</h3>
             <pre>curl -X POST http://localhost:8080/api/vision/analyzeAndText \
 -H "Content-Type: application/json" \
+-H "X-API-Key: demo-key" \
 -d '{
   "p1": "Nike",
   "p2": "Laufschuhe",
@@ -365,8 +418,14 @@
             Eine kommerzielle Nutzung oder Weiterverwendung ist ohne ausdrückliche Genehmigung nicht gestattet.
         </p>
     </footer>
-
+    <!-- JavaScript für die Produkttyp-Auswahl und Formularaktualisierung -->
     <script>
+        // API-Key aus localStorage laden oder Standardwert verwenden
+        let API_KEY = localStorage.getItem('pim_ai_api_key') || "demo-key";
+
+        // API-Key-Element im Header aktualisieren
+        document.getElementById('api-key-input').value = API_KEY;
+
         const form = document.getElementById("analyzeForm");
         const parameterForm = document.getElementById("parameterForm");
         const produktTypInfo = document.getElementById("produktTypInfo");
@@ -380,88 +439,57 @@
         const imageStatus = document.getElementById("imageStatus");
         const resetBtn = document.getElementById("resetBtn");
         const generateBtn = document.getElementById("generateBtn");
+        const productTypeSelect = document.getElementById("product-type-select");
+        const languageSelect = document.getElementById("language-select");
+        const languageSwitchBtn = document.getElementById("language-switch-btn");
+        const saveApiKeyBtn = document.getElementById("save-api-key");
+
+        // API-Key speichern, wenn der Speichern-Button geklickt wird
+        saveApiKeyBtn.addEventListener("click", function () {
+            const newApiKey = document.getElementById("api-key-input").value;
+            if (newApiKey && newApiKey.trim() !== '') {
+                API_KEY = newApiKey.trim();
+                localStorage.setItem('pim_ai_api_key', API_KEY);
+                alert(currentLanguage === "de" ? "API-Key gespeichert!" : "API key saved!");
+            }
+        });
+
+        // Funktion zum Hinzufügen des API-Keys zu allen Fetch-Anfragen
+        async function fetchWithApiKey(url, options = {}) {
+            // Stelle sicher, dass headers existiert
+            if (!options.headers) {
+                options.headers = {};
+            }
+
+            // Füge den API-Key-Header hinzu
+            options.headers['X-API-Key'] = API_KEY;
+
+            try {
+                const response = await fetch(url, options);
+
+                // Prüfe auf Unauthorized-Fehler (401)
+                if (response.status === 401) {
+                    const errorData = await response.json();
+                    // Zeige Fehlermeldung an
+                    alert(errorData.error || "API-Schlüssel ungültig oder fehlt");
+                    throw new Error("API-Authentifizierungsfehler");
+                }
+
+                return response;
+            } catch (error) {
+                console.error("Fehler bei der API-Anfrage:", error);
+                throw error;
+            }
+        }
 
         // Aktivieren und deaktivieren der Bildupload-Funktionalität
         let isImageAnalysisActive = false;
         let base64Image = "";
+        let currentLanguage = "de"; // Standard-Sprache
 
-        tabText.addEventListener("click", function () {
-            tabText.classList.add("active");
-            tabImage.classList.remove("active");
-            imageUploadSection.style.display = "none";
-            isImageAnalysisActive = false;
-            generateBtn.textContent = "Beschreibung generieren";
-        });
-
-        tabImage.addEventListener("click", function () {
-            tabText.classList.remove("active");
-            tabImage.classList.add("active");
-            imageUploadSection.style.display = "block";
-            isImageAnalysisActive = true;
-            generateBtn.textContent = "Bild analysieren & Beschreibung generieren";
-        });
-
-        // Drag & Drop und Bildupload
-        dropArea.addEventListener("click", function () {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener("change", function () {
-            handleFiles(this.files);
-        });
-
-        dropArea.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea.style.borderColor = "#3498db";
-        });
-
-        dropArea.addEventListener("dragleave", function () {
-            dropArea.style.borderColor = "#ccc";
-        });
-
-        dropArea.addEventListener("drop", function (e) {
-            e.preventDefault();
-            dropArea.style.borderColor = "#ccc";
-            handleFiles(e.dataTransfer.files);
-        });
-
-        function handleFiles(files) {
-            if (files.length > 0) {
-                const file = files[0];
-                if (!file.type.match('image.*')) {
-                    imageStatus.textContent = "❌ Bitte nur Bilddateien hochladen (JPG, PNG, etc.)";
-                    return;
-                }
-
-                // Größenbeschränkung (5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    imageStatus.textContent = "❌ Die Bilddatei ist zu groß (maximal 5 MB erlaubt)";
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = "block";
-                    base64Image = e.target.result.split(',')[1]; // Base64 ohne MIME-Typ-Header
-                    imageStatus.textContent = "✅ Bild erfolgreich geladen: " + file.name;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Zurücksetzen-Button
-        resetBtn.addEventListener("click", function () {
-            form.reset();
-            imagePreview.style.display = "none";
-            base64Image = "";
-            imageStatus.textContent = "";
-            responseArea.textContent = "Formular zurückgesetzt. Noch keine Anfrage gesendet.";
-            loadConfig(); // Lade Standardwerte
-        });
-
-        // Demo-Daten für verschiedene Produkttypen
-        const demoDaten = {
+        // Produkttypen und ihre Demo-Daten
+        let produktTypen = [];
+        let demoDaten = {
             "fashion": {
                 "p1": "Nike",
                 "p2": "Laufschuhe",
@@ -501,58 +529,315 @@
         };
 
         // Aktiver Produkttyp
-        let activeProduktTyp = "fashion";
+        let activeProduktTypId = "fashion";
 
-        // Konfiguration vom Server laden
-        async function loadConfig() {
-            try {
-                const response = await fetch("/api/vision/config");
-                const config = await response.json();
+        // Tab-Wechsel Funktionalität
+        tabText.addEventListener("click", function () {
+            tabText.classList.add("active");
+            tabImage.classList.remove("active");
+            imageUploadSection.style.display = "none";
+            isImageAnalysisActive = false;
+            updateGenerateButtonText();
+        });
 
-                activeProduktTyp = config.produktTypId;
+        tabImage.addEventListener("click", function () {
+            tabText.classList.remove("active");
+            tabImage.classList.add("active");
+            imageUploadSection.style.display = "block";
+            isImageAnalysisActive = true;
+            updateGenerateButtonText();
+        });
 
-                // Produkttyp-Info anzeigen
-                produktTypInfo.innerHTML = `
-                    <strong>Aktiver Produkttyp:</strong> ${config.produktTypName} (ID: ${config.produktTypId})
-                `;
-
-                // Parameter-Eingabefelder dynamisch erstellen
-                parameterForm.innerHTML = '';
-
-                // Demo-Daten für den aktuellen Produkttyp
-                const typDemoDaten = demoDaten[config.produktTypId] || {};
-
-                for (let i = 1; i <= 10; i++) {
-                    const paramKey = `p${i}`;
-                    const paramName = config.parameter[paramKey];
-
-                    if (paramName && paramName.trim() !== '') {
-                        const demoWert = typDemoDaten[paramKey] || "";
-                        const label = document.createElement('label');
-                        label.innerHTML = `${paramName}: <input type="text" name="${paramKey}" value="${demoWert}" required />`;
-                        parameterForm.appendChild(label);
-                    }
-                }
-
-            } catch (err) {
-                console.error("Fehler beim Laden der Konfiguration:", err);
-                produktTypInfo.innerHTML = "⚠️ Fehler beim Laden der Konfiguration";
-
-                // Notfall-Felder anzeigen, wenn Server nicht antwortet
-                parameterForm.innerHTML = `
-                    <label>Parameter 1: <input type="text" name="p1" value="Demo-Wert 1" required /></label>
-                    <label>Parameter 2: <input type="text" name="p2" value="Demo-Wert 2" required /></label>
-                    <label>Parameter 3: <input type="text" name="p3" value="Demo-Wert 3" required /></label>
-                    <label>Parameter 4: <input type="text" name="p4" value="Demo-Wert 4" required /></label>
-                `;
+        // Funktion zum Aktualisieren des Texts auf dem Generieren-Button je nach Sprache und Modus
+        function updateGenerateButtonText() {
+            if (currentLanguage === "de") {
+                generateBtn.textContent = isImageAnalysisActive
+                    ? "Bild analysieren & Beschreibung generieren"
+                    : "Beschreibung generieren";
+            } else {
+                generateBtn.textContent = isImageAnalysisActive
+                    ? "Analyze Image & Generate Description"
+                    : "Generate Description";
             }
         }
 
-        // Beim Laden der Seite
-        document.addEventListener('DOMContentLoaded', function () {
-            loadConfig();
+        // Drag & Drop und Bildupload
+        dropArea.addEventListener("click", function () {
+            fileInput.click();
         });
 
+        fileInput.addEventListener("change", function () {
+            handleFiles(this.files);
+        });
+
+        dropArea.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            dropArea.style.borderColor = "#3498db";
+        });
+
+        dropArea.addEventListener("dragleave", function () {
+            dropArea.style.borderColor = "#ccc";
+        });
+
+        dropArea.addEventListener("drop", function (e) {
+            e.preventDefault();
+            dropArea.style.borderColor = "#ccc";
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (!file.type.match('image.*')) {
+                    imageStatus.textContent = currentLanguage === "de"
+                        ? "❌ Bitte nur Bilddateien hochladen (JPG, PNG, etc.)"
+                        : "❌ Please upload image files only (JPG, PNG, etc.)";
+                    return;
+                }
+
+                // Größenbeschränkung (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    imageStatus.textContent = currentLanguage === "de"
+                        ? "❌ Die Bilddatei ist zu groß (maximal 5 MB erlaubt)"
+                        : "❌ The image file is too large (maximum 5 MB allowed)";
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = "block";
+                    base64Image = e.target.result.split(',')[1]; // Base64 ohne MIME-Typ-Header
+                    imageStatus.textContent = currentLanguage === "de"
+                        ? "✅ Bild erfolgreich geladen: " + file.name
+                        : "✅ Image successfully loaded: " + file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Zurücksetzen-Button
+        resetBtn.addEventListener("click", function () {
+            form.reset();
+            imagePreview.style.display = "none";
+            base64Image = "";
+            imageStatus.textContent = "";
+            responseArea.textContent = currentLanguage === "de"
+                ? "Formular zurückgesetzt. Noch keine Anfrage gesendet."
+                : "Form reset. No request sent yet.";
+
+            // Lade Demo-Daten für den aktuellen Produkttyp
+            loadDemoDataForProductType(activeProduktTypId);
+        });
+
+        // Produkttyp-Auswahl Event-Listener
+        productTypeSelect.addEventListener("change", function () {
+            activeProduktTypId = this.value;
+            loadDemoDataForProductType(activeProduktTypId);
+
+            // Aktualisiere die Produkttyp-Info
+            const selectedOption = this.options[this.selectedIndex];
+            const produktTypName = selectedOption.text;
+            updateProduktTypInfo(activeProduktTypId, produktTypName);
+        });
+
+        // Sprachumschaltung
+        languageSwitchBtn.addEventListener("click", function () {
+            const newLanguage = languageSelect.value;
+            changeLanguage(newLanguage);
+        });
+
+        function changeLanguage(language) {
+            // API-Aufruf, um die Sprache zu ändern
+            fetchWithApiKey(`/api/language/set?language=${language}`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentLanguage = language;
+
+                        // UI-Texte aktualisieren
+                        updateUITexts();
+
+                        // Info-Box aktualisieren
+                        const selectedOption = productTypeSelect.options[productTypeSelect.selectedIndex];
+                        updateProduktTypInfo(activeProduktTypId, selectedOption.text);
+
+                        // Button-Text aktualisieren
+                        updateGenerateButtonText();
+                    } else {
+                        alert(currentLanguage === "de"
+                            ? "Fehler beim Ändern der Sprache: " + data.message
+                            : "Error changing language: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Sprachänderung fehlgeschlagen:", error);
+                    alert(currentLanguage === "de"
+                        ? "Fehler bei der Sprachänderung. Bitte versuchen Sie es später erneut."
+                        : "Error changing language. Please try again later.");
+                });
+        }
+
+        function updateUITexts() {
+                // UI-Texte je nach aktueller Sprache aktualisieren
+            if (currentLanguage === "de") {
+                // HIER IST DIE KORREKTUR: Anstatt den Haupttitel zu ändern, der bereits durch das HTML gesetzt ist,
+                // ändern wir nur die anderen UI-Texte
+                document.querySelector("label[for='language-select']").textContent = "Sprache wählen:";
+                document.querySelector("label[for='product-type-select']").textContent = "Produkttyp auswählen:";
+                document.querySelector("#tab-text").textContent = "Nur Text";
+                document.querySelector("#tab-image").textContent = "Mit Bildanalyse";
+                document.querySelector("#dropArea p").textContent = "📷 Produktbild hier ablegen oder klicken zum Auswählen";
+                document.querySelector("h3").textContent = "Ergebnis:";
+                document.querySelector("#language-switch-btn").textContent = "Sprache anwenden";
+                document.querySelector("#resetBtn").textContent = "Zurücksetzen";
+                document.getElementById("save-api-key").textContent = "Speichern";
+
+                if (responseArea.textContent.includes("Form reset") || responseArea.textContent.includes("No request")) {
+                    responseArea.textContent = "Noch keine Anfrage gesendet.";
+                }
+            } else {
+                // HIER IST DIE KORREKTUR: Der Haupttitel wird nicht angepasst, da er bereits im HTML steht
+                document.querySelector("label[for='language-select']").textContent = "Select language:";
+                document.querySelector("label[for='product-type-select']").textContent = "Select product type:";
+                document.querySelector("#tab-text").textContent = "Text Only";
+                document.querySelector("#tab-image").textContent = "With Image Analysis";
+                document.querySelector("#dropArea p").textContent = "📷 Drop product image here or click to select";
+                document.querySelector("h3").textContent = "Result:";
+                document.querySelector("#language-switch-btn").textContent = "Apply Language";
+                document.querySelector("#resetBtn").textContent = "Reset";
+                document.getElementById("save-api-key").textContent = "Save";
+
+                if (responseArea.textContent.includes("Formular zurückgesetzt") || responseArea.textContent.includes("Noch keine")) {
+                    responseArea.textContent = "No request sent yet.";
+                }
+            }
+
+            updateGenerateButtonText();
+        }
+
+        // Lade alle verfügbaren Produkttypen
+        async function loadProductTypes() {
+            try {
+                // Hole alle Produkttypen aus der Konfiguration
+                const response = await fetchWithApiKey('/api/vision/allProductTypes');
+                const data = await response.json();
+
+                // Produkttypen speichern
+                produktTypen = data.produktTypen || [];
+
+                // Dropdown-Auswahl befüllen
+                productTypeSelect.innerHTML = '';
+                produktTypen.forEach(typ => {
+                    const option = document.createElement('option');
+                    option.value = typ.id;
+                    option.textContent = typ.name;
+                    // Setze den aktiven Produkttyp als ausgewählt
+                    if (typ.id === activeProduktTypId) {
+                        option.selected = true;
+                    }
+                    productTypeSelect.appendChild(option);
+                });
+
+                // Aktuelle Sprache abrufen
+                const langResponse = await fetchWithApiKey('/api/language/current');
+                const langData = await langResponse.json();
+                currentLanguage = langData.language || "de";
+
+                // Sprachauswahl aktualisieren
+                languageSelect.value = currentLanguage;
+
+                // UI-Texte entsprechend der Sprache aktualisieren
+                updateUITexts();
+
+            } catch (err) {
+                console.error("Fehler beim Laden der Produkttypen:", err);
+
+                // Notfall-Optionen, wenn der Server nicht antwortet
+                productTypeSelect.innerHTML = `
+                <option value="fashion">Bekleidung</option>
+                <option value="electronics">Elektronik</option>
+                <option value="furniture">Möbel</option>
+            `;
+            }
+        }
+
+        // Lade Demo-Daten für den ausgewählten Produkttyp
+        function loadDemoDataForProductType(produktTypId) {
+            // Default auf den ersten Produkttyp, falls der angeforderte nicht existiert
+            if (!demoDaten[produktTypId]) {
+                produktTypId = Object.keys(demoDaten)[0];
+            }
+
+            // Aktiven Produkttyp speichern
+            activeProduktTypId = produktTypId;
+
+            // Demo-Daten für den aktuellen Produkttyp
+            const typDemoDaten = demoDaten[produktTypId] || {};
+
+            // Konfiguration für den Produkttyp laden
+            fetchWithApiKey(`/api/vision/config?type=${produktTypId}`)
+                .then(response => response.json())
+                .then(config => {
+                    // Parameter-Felder aktualisieren
+                    parameterForm.innerHTML = '';
+
+                    for (let i = 1; i <= 10; i++) {
+                        const paramKey = `p${i}`;
+                        const paramName = config.parameter[paramKey];
+
+                        if (paramName && paramName.trim() !== '') {
+                            const demoWert = typDemoDaten[paramKey] || "";
+                            const label = document.createElement('label');
+                            label.innerHTML = `${paramName}: <input type="text" name="${paramKey}" value="${demoWert}" />`;
+                            parameterForm.appendChild(label);
+                        }
+                    }
+
+                    // Produkttyp-Info aktualisieren
+                    updateProduktTypInfo(produktTypId, config.produktTypName);
+                })
+                .catch(err => {
+                    console.error("Fehler beim Laden der Konfiguration:", err);
+
+                    // Notfall-Felder anzeigen, wenn der Server nicht antwortet
+                    parameterForm.innerHTML = '';
+                    for (let i = 1; i <= 10; i++) {
+                        const paramKey = `p${i}`;
+                        if (typDemoDaten[paramKey]) {
+                            const label = document.createElement('label');
+                            label.innerHTML = `Parameter ${i}: <input type="text" name="${paramKey}" value="${typDemoDaten[paramKey]}" />`;
+                            parameterForm.appendChild(label);
+                        }
+                    }
+
+                    updateProduktTypInfo(produktTypId, getProductTypeName(produktTypId));
+                });
+        }
+
+        function getProductTypeName(id) {
+            // Fallback-Namen für die Produkttypen
+            const names = {
+                "fashion": "Bekleidung",
+                "electronics": "Elektronik",
+                "furniture": "Möbel"
+            };
+            return names[id] || id;
+        }
+
+        function updateProduktTypInfo(id, name) {
+            let infoText;
+            if (currentLanguage === "de") {
+                infoText = `<strong>Aktiver Produkttyp:</strong> ${name} (ID: ${id})`;
+            } else {
+                infoText = `<strong>Active Product Type:</strong> ${name} (ID: ${id})`;
+            }
+            produktTypInfo.innerHTML = infoText;
+        }
+
+        // Formular-Submission
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
@@ -568,6 +853,11 @@
             // Base64-Bild hinzufügen, wenn vorhanden
             payload.imageBase64 = base64Image;
 
+            // Anzeigen, dass die Anfrage gesendet wird
+            responseArea.textContent = currentLanguage === "de"
+                ? "⏳ Anfrage wird gesendet..."
+                : "⏳ Sending request...";
+
             // Entscheiden, welcher Endpunkt verwendet wird
             if (isImageAnalysisActive && base64Image) {
                 sendRequestWithImage(payload);
@@ -577,38 +867,64 @@
         });
 
         async function sendRequest(payload) {
-            responseArea.textContent = "⏳ Anfrage wird gesendet...";
-
             try {
+                // Endpunkt mit Sprachparameter
+                const endpoint = `/api/enrich/gpt/${currentLanguage}`;
+
                 // GPT-Endpunkt direkt verwenden, da keine Bilder gesendet werden
-                const res = await fetch("/api/enrich/gpt", {
+                const res = await fetchWithApiKey(endpoint, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
+
                 const text = await res.text();
                 responseArea.textContent = text;
             } catch (err) {
-                responseArea.textContent = "❌ Fehler: " + err.message;
+                responseArea.textContent = currentLanguage === "de"
+                    ? "❌ Fehler: " + err.message
+                    : "❌ Error: " + err.message;
             }
         }
 
         async function sendRequestWithImage(payload) {
-            responseArea.textContent = "⏳ Bild wird analysiert und Beschreibung wird generiert...";
-
             try {
+                // Endpunkt mit Sprachparameter
+                const endpoint = `/api/vision/analyzeAndText/${currentLanguage}`;
+
                 // Bild-Analyse-Endpunkt verwenden
-                const res = await fetch("/api/vision/analyzeAndText", {
+                const res = await fetchWithApiKey(endpoint, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
+
                 const text = await res.text();
                 responseArea.textContent = text;
             } catch (err) {
-                responseArea.textContent = "❌ Fehler bei der Bildanalyse: " + err.message;
+                responseArea.textContent = currentLanguage === "de"
+                    ? "❌ Fehler bei der Bildanalyse: " + err.message
+                    : "❌ Error during image analysis: " + err.message;
             }
         }
+
+        // Beim Laden der Seite
+        document.addEventListener('DOMContentLoaded', function () {
+            // Produkttypen laden
+            loadProductTypes();
+
+            // Aktuelle Sprache laden und UI aktualisieren
+            fetchWithApiKey('/api/language/current')
+                .then(response => response.json())
+                .then(data => {
+                    currentLanguage = data.language || "de";
+                    languageSelect.value = currentLanguage;
+                    updateUITexts();
+                })
+                .catch(err => {
+                    console.error("Fehler beim Laden der Sprache:", err);
+                });
+        });
     </script>
 </body>
 

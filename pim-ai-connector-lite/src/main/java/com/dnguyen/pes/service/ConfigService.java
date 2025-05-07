@@ -10,7 +10,9 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -22,8 +24,6 @@ public class ConfigService {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigService.class);
 
-    // Standardwert "fashion" wird verwendet, wenn keine Umgebungsvariable gesetzt
-    // ist
     @Value("${ACTIVE_PRODUKTTYP_ID:fashion}")
     private String activeProduktTypId;
 
@@ -33,7 +33,6 @@ public class ConfigService {
     private String produktTypName = "Standard";
 
     public ConfigService() {
-        // Leerer Konstruktor - Initialisierung erfolgt in init()
         logger.info("ConfigService wird initialisiert");
     }
 
@@ -43,7 +42,6 @@ public class ConfigService {
             logger.info("PostConstruct: Initialisiere Konfiguration mit Produkttyp-ID: {}",
                     activeProduktTypId != null ? activeProduktTypId : "null (wird Default 'fashion' verwenden)");
 
-            // Sicherheitscheck für null-Wert
             if (activeProduktTypId == null) {
                 activeProduktTypId = "fashion";
                 logger.warn("Aktiver Produkttyp ist null, setze auf Standard-Wert 'fashion'");
@@ -119,8 +117,6 @@ public class ConfigService {
                 logger.warn("Produkttyp mit ID '{}' nicht gefunden. Verwende ersten verfügbaren Produkttyp.",
                         activeProduktTypId);
 
-                // Wenn der konfigurierte Produkttyp nicht gefunden wurde, verwende den ersten
-                // verfügbaren
                 if (produktTypList.getLength() > 0) {
                     activeProduktTyp = (Element) produktTypList.item(0);
                     activeProduktTypId = activeProduktTyp.getAttribute("id");
@@ -132,11 +128,9 @@ public class ConfigService {
                 }
             }
 
-            // Produkttyp Name laden
             produktTypName = getElementTextContent(activeProduktTyp, "n");
             logger.info("Produkttyp Name: {}", produktTypName);
 
-            // Parameter laden
             parameterMap = new HashMap<>();
             Element parameterElement = (Element) activeProduktTyp.getElementsByTagName("parameter").item(0);
 
@@ -147,7 +141,6 @@ public class ConfigService {
                 logger.debug("Parameter {}: {}", paramName, paramValue);
             }
 
-            // Prompt-Template laden
             promptTemplate = getElementTextContent(activeProduktTyp, "prompt-template");
 
             logger.info("Produkttyp '{}' erfolgreich geladen", produktTypName);
@@ -156,6 +149,96 @@ public class ConfigService {
             logger.error("Fehler beim Laden des aktiven Produkttyps: " + e.getMessage(), e);
             setupDefaultValues();
         }
+    }
+    
+    public Map<String, Object> loadProduktTypById(String produktTypId) {
+        try {
+            if (configDocument == null) {
+                loadConfiguration();
+            }
+            
+            NodeList produktTypList = configDocument.getElementsByTagName("produkttyp");
+            
+            for (int i = 0; i < produktTypList.getLength(); i++) {
+                Element produktTyp = (Element) produktTypList.item(i);
+                String id = produktTyp.getAttribute("id");
+                
+                if (id.equals(produktTypId)) {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("id", id);
+                    result.put("name", getElementTextContent(produktTyp, "n"));
+                    
+                    Map<String, String> parameter = new HashMap<>();
+                    Element parameterElement = (Element) produktTyp.getElementsByTagName("parameter").item(0);
+                    
+                    if (parameterElement != null) {
+                        for (int j = 1; j <= 10; j++) {
+                            String paramName = "p" + j;
+                            String paramValue = getElementTextContent(parameterElement, paramName);
+                            if (paramValue != null && !paramValue.isEmpty()) {
+                                parameter.put(paramName, paramValue);
+                            }
+                        }
+                    }
+                    
+                    result.put("parameter", parameter);
+                    result.put("promptTemplate", getElementTextContent(produktTyp, "prompt-template"));
+                    
+                    return result;
+                }
+            }
+            
+            logger.warn("Produkttyp mit ID '{}' nicht gefunden", produktTypId);
+            return null;
+            
+        } catch (Exception e) {
+            logger.error("Fehler beim Laden des Produkttyps {}: {}", produktTypId, e.getMessage());
+            return null;
+        }
+    }
+   
+    public List<Map<String, String>> getAllProduktTypen() {
+        List<Map<String, String>> result = new ArrayList<>();
+        
+        try {
+            if (configDocument == null) {
+                loadConfiguration();
+            }
+            
+            NodeList produktTypList = configDocument.getElementsByTagName("produkttyp");
+            
+            for (int i = 0; i < produktTypList.getLength(); i++) {
+                Element produktTyp = (Element) produktTypList.item(i);
+                String id = produktTyp.getAttribute("id");
+                String name = getElementTextContent(produktTyp, "n");
+                
+                Map<String, String> produktTypInfo = new HashMap<>();
+                produktTypInfo.put("id", id);
+                produktTypInfo.put("name", name);
+                
+                result.add(produktTypInfo);
+            }
+            
+        } catch (Exception e) {
+            logger.error("Fehler beim Laden aller Produkttypen: {}", e.getMessage());
+            
+            Map<String, String> defaultTyp1 = new HashMap<>();
+            defaultTyp1.put("id", "fashion");
+            defaultTyp1.put("name", "Bekleidung");
+            result.add(defaultTyp1);
+            
+            Map<String, String> defaultTyp2 = new HashMap<>();
+            defaultTyp2.put("id", "electronics");
+            defaultTyp2.put("name", "Elektronik");
+            result.add(defaultTyp2);
+            
+            Map<String, String> defaultTyp3 = new HashMap<>();
+            defaultTyp3.put("id", "furniture");
+            defaultTyp3.put("name", "Möbel");
+            result.add(defaultTyp3);
+        }
+        
+        return result;
     }
 
     private String getElementTextContent(Element parent, String tagName) {
@@ -198,5 +281,34 @@ public class ConfigService {
 
     public void refreshConfiguration() {
         loadConfiguration();
+    }
+   
+    public boolean changeActiveProduktTyp(String produktTypId) {
+        try {
+            if (configDocument == null) {
+                loadConfiguration();
+            }
+            
+            NodeList produktTypList = configDocument.getElementsByTagName("produkttyp");
+            
+            for (int i = 0; i < produktTypList.getLength(); i++) {
+                Element produktTyp = (Element) produktTypList.item(i);
+                String id = produktTyp.getAttribute("id");
+                
+                if (id.equals(produktTypId)) {
+                    activeProduktTypId = produktTypId;
+                    loadActiveProduktTyp();
+                    return true;
+                }
+            }
+            
+            logger.warn("Produkttyp mit ID '{}' nicht gefunden, aktiver Typ bleibt '{}'", 
+                    produktTypId, activeProduktTypId);
+            return false;
+            
+        } catch (Exception e) {
+            logger.error("Fehler beim Ändern des aktiven Produkttyps: {}", e.getMessage());
+            return false;
+        }
     }
 }

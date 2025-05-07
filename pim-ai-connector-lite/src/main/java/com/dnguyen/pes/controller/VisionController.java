@@ -2,6 +2,7 @@ package com.dnguyen.pes.controller;
 
 import com.dnguyen.pes.dto.ProduktTypParameter;
 import com.dnguyen.pes.service.ConfigService;
+import com.dnguyen.pes.service.LanguageConfigService;
 import com.dnguyen.pes.service.VisionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,26 +19,97 @@ public class VisionController {
     private static final Logger logger = LoggerFactory.getLogger(VisionController.class);
     private final VisionService visionService;
     private final ConfigService configService;
+    private final LanguageConfigService languageConfigService;
 
-    public VisionController(VisionService visionService, ConfigService configService) {
+    public VisionController(VisionService visionService, ConfigService configService, LanguageConfigService languageConfigService) {
         this.visionService = visionService;
         this.configService = configService;
+        this.languageConfigService = languageConfigService;
     }
 
+    // WICHTIG: Parameter explizit benennen mit name="type"
     @GetMapping("/config")
-    public ResponseEntity<Map<String, Object>> getConfig() {
-        logger.info("Konfiguration angefordert");
-        Map<String, Object> config = new HashMap<>();
-        config.put("produktTypId", configService.getActiveProduktTypId());
-        config.put("produktTypName", configService.getProduktTypName());
-        config.put("parameter", configService.getParameterMap());
+    public ResponseEntity<Map<String, Object>> getConfig(@RequestParam(name = "type", required = false) String type) {
+        logger.info("Konfiguration angefordert für Typ: {}", type != null ? type : "aktiv");
+        
+        Map<String, Object> config;
+        
+        // Wenn ein spezifischer Produkttyp angefordert wurde
+        if (type != null && !type.isEmpty()) {
+            config = configService.loadProduktTypById(type);
+            
+            // Fallback auf aktiven Produkttyp, wenn angeforderten nicht gefunden
+            if (config == null) {
+                logger.warn("Angeforderten Produkttyp '{}' nicht gefunden, gebe aktiven Produkttyp zurück", type);
+                config = new HashMap<>();
+                config.put("produktTypId", configService.getActiveProduktTypId());
+                config.put("produktTypName", configService.getProduktTypName());
+                config.put("parameter", configService.getParameterMap());
+            }
+        } else {
+            // Standard-Konfiguration zurückgeben (aktiver Produkttyp)
+            config = new HashMap<>();
+            config.put("produktTypId", configService.getActiveProduktTypId());
+            config.put("produktTypName", configService.getProduktTypName());
+            config.put("parameter", configService.getParameterMap());
+        }
+        
         return ResponseEntity.ok(config);
+    }
+    
+    @GetMapping("/allProductTypes")
+    public ResponseEntity<Map<String, Object>> getAllProductTypes() {
+        logger.info("Alle Produkttypen angefordert");
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("activeType", configService.getActiveProduktTypId());
+        response.put("produktTypen", configService.getAllProduktTypen());
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    // WICHTIG: Parameter explizit benennen mit name="type"
+    @PostMapping("/setProductType")
+    public ResponseEntity<Map<String, Object>> setProductType(@RequestParam(name = "type") String type) {
+        logger.info("Produkttyp-Änderung angefordert: {}", type);
+        
+        Map<String, Object> response = new HashMap<>();
+        boolean success = configService.changeActiveProduktTyp(type);
+        
+        if (success) {
+            response.put("success", true);
+            response.put("message", "Produkttyp erfolgreich geändert auf: " + configService.getProduktTypName());
+            response.put("produktTypId", configService.getActiveProduktTypId());
+            response.put("produktTypName", configService.getProduktTypName());
+            response.put("parameter", configService.getParameterMap());
+        } else {
+            response.put("success", false);
+            response.put("message", "Produkttyp '" + type + "' nicht gefunden");
+            response.put("availableTypes", configService.getAllProduktTypen());
+        }
+        
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/analyzeAndText")
     public ResponseEntity<String> analyzeImageWithText(@RequestBody ProduktTypParameter request) {
+        return analyzeImageWithTextLanguage(request, null);
+    }
+    
+    // WICHTIG: Parameter explizit benennen mit name="language"
+    @PostMapping("/analyzeAndText/{language}")
+    public ResponseEntity<String> analyzeImageWithTextLanguage(
+            @RequestBody ProduktTypParameter request,
+            @PathVariable(name = "language") String language) {
+        
         try {
-            logger.info("Bild- und Text-Analyse angefordert");
+            // Sprachcode ermitteln (falls angegeben)
+            String targetLanguage = language;
+            if (targetLanguage == null || targetLanguage.isEmpty()) {
+                targetLanguage = languageConfigService.getDefaultLanguage();
+            }
+            
+            logger.info("Bild- und Text-Analyse angefordert in Sprache: {}", targetLanguage);
             StringBuilder response = new StringBuilder();
             Map<String, String> paramValues = new HashMap<>();
 
@@ -78,22 +150,49 @@ public class VisionController {
                 // Aufruf Vision API
                 String visionResult = visionService.analyzeImage(imageBytes);
 
-                response.append("=== Google Vision Ergebnis ===\n")
+                // Überschrift lokalisieren
+                String heading;
+                if ("en".equals(targetLanguage)) {
+                    heading = "=== Google Vision Result ===\n";
+                } else {
+                    heading = "=== Google Vision Ergebnis ===\n";
+                }
+
+                response.append(heading)
                         .append(visionResult).append("\n\n");
             } else {
                 logger.info("Keine Bildanalyse - nur Text-Generierung");
             }
 
-            // GPT-Beschreibung generieren
-            String gptText = visionService.generateGptDescription(paramValues);
-            response.append("=== Produktbeschreibung (" + configService.getProduktTypName() + ") ===\n")
-                    .append(gptText);
+            // GPT-Beschreibung in der gewünschten Sprache generieren
+            String gptText = visionService.generateGptDescription(paramValues, targetLanguage);
+            
+            // Produkttyp-Name holen
+            String produktTypName = configService.getProduktTypName();
+            
+            // Überschrift lokalisieren
+            String heading;
+            if ("en".equals(targetLanguage)) {
+                heading = "=== Product Description (" + produktTypName + ") ===\n";
+            } else {
+                heading = "=== Produktbeschreibung (" + produktTypName + ") ===\n";
+            }
+            
+            response.append(heading).append(gptText);
 
             return ResponseEntity.ok(response.toString());
 
         } catch (Exception e) {
             logger.error("Fehler bei der Verarbeitung: " + e.getMessage(), e);
-            return ResponseEntity.internalServerError().body("❌ Fehler bei der Verarbeitung: " + e.getMessage());
+            
+            String errorMsg;
+            if (language != null && "en".equals(language.toLowerCase())) {
+                errorMsg = "❌ Error during processing: " + e.getMessage();
+            } else {
+                errorMsg = "❌ Fehler bei der Verarbeitung: " + e.getMessage();
+            }
+            
+            return ResponseEntity.internalServerError().body(errorMsg);
         }
     }
 }

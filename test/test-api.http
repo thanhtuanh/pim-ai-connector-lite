@@ -1,24 +1,76 @@
-### Test: Demo-Antwort von /api/enrich
-POST http://localhost:8080/api/enrich
+### Test API-Endpunkte
+@apiBaseUrl = http://localhost:8080
+@apiKey = demo-key
+
+### Konfiguration abrufen
+GET {{apiBaseUrl}}/api/vision/config
+X-API-Key: {{apiKey}}
+
+### Alle Produkttypen abrufen
+GET {{apiBaseUrl}}/api/vision/allProductTypes
+X-API-Key: {{apiKey}}
+
+### Produkttyp setzen
+POST {{apiBaseUrl}}/api/vision/setProductType?type=electronics
+X-API-Key: {{apiKey}}
+
+### Aktuelle Sprache abrufen
+GET {{apiBaseUrl}}/api/language/current
+X-API-Key: {{apiKey}}
+
+### Sprache auf Englisch setzen
+POST {{apiBaseUrl}}/api/language/set?language=en
+X-API-Key: {{apiKey}}
+
+### Sprache auf Deutsch setzen
+POST {{apiBaseUrl}}/api/language/set?language=de
+X-API-Key: {{apiKey}}
+
+### GPT-Produktbeschreibung auf Deutsch generieren
+POST {{apiBaseUrl}}/api/enrich/gpt/de
 Content-Type: application/json
+X-API-Key: {{apiKey}}
 
 {
-  "marke": "HUGO BOSS",
-  "produktart": "Hemd",
-  "farbe": "weiß",
-  "material": "Baumwolle"
+  "p1": "Samsung",
+  "p2": "Smartphone",
+  "p3": "Galaxy S25",
+  "p4": "6,7 Zoll AMOLED",
+  "p5": "256GB",
+  "p6": "Snapdragon 8 Gen 3",
+  "p7": "Android 14",
+  "p8": "24 Stunden",
+  "p9": "108MP Hauptkamera",
+  "p10": "WiFi 6, Bluetooth 5.3, 5G"
 }
 
-###
-
-### Test: GPT-Antwort von /api/enrich/gpt
-POST http://localhost:8080/api/enrich/gpt
+### GPT-Produktbeschreibung auf Englisch generieren
+POST {{apiBaseUrl}}/api/enrich/gpt/en
 Content-Type: application/json
+X-API-Key: {{apiKey}}
 
 {
-  "marke": "HUGO BOSS",
-  "produktart": "Hemd",
-  "farbe": "weiß",
-  "material": "Baumwolle"
+  "p1": "Samsung",
+  "p2": "Smartphone",
+  "p3": "Galaxy S25",
+  "p4": "6.7 inch AMOLED",
+  "p5": "256GB",
+  "p6": "Snapdragon 8 Gen 3",
+  "p7": "Android 14",
+  "p8": "24 hours",
+  "p9": "108MP main camera",
+  "p10": "WiFi 6, Bluetooth 5.3, 5G"
 }
 
+### GPT-Produktbeschreibung (standardmäßige Sprache)
+POST {{apiBaseUrl}}/api/enrich/gpt
+Content-Type: application/json
+X-API-Key: {{apiKey}}
+
+{
+  "p1": "Nike",
+  "p2": "Running Shoes",
+  "p3": "Air Zoom",
+  "p4": "Breathable mesh",
+  "p5": "US 10"
+}
