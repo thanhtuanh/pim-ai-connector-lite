@@ -68,16 +68,16 @@ public class ApiKeyFilter extends OncePerRequestFilter {
      */
     private boolean isStaticResource(String path) {
         // Erlaube Zugriff auf statische Ressourcen und HTML-Dateien
-        return path.equals("/") 
-               || path.startsWith("/assets/") 
-               || path.endsWith(".html") 
-               || path.endsWith(".js") 
-               || path.endsWith(".css") 
-               || path.endsWith(".ico") 
-               || path.endsWith(".png") 
-               || path.endsWith(".jpg") 
-               || path.endsWith(".jpeg") 
-               || path.endsWith(".gif")
-               || path.endsWith(".svg");
+        return path.equals("/")
+                || path.startsWith("/assets/")
+                || path.endsWith(".html")
+                || path.endsWith(".js")
+                || path.endsWith(".css")
+                || path.endsWith(".ico")
+                || path.endsWith(".png")
+                || path.endsWith(".jpg")
+                || path.endsWith(".jpeg")
+                || path.endsWith(".gif")
+                || path.endsWith(".svg");
     }
 }

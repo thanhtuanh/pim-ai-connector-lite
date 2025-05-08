@@ -25,7 +25,8 @@ public class ApiKeyInterceptor implements HandlerInterceptor {
     private static final String API_KEY_PARAM = "apiKey";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws IOException {
         // Wenn API-Key-Authentifizierung deaktiviert ist, erlaube Anfrage
         if (!enableApiKeyAuth) {
             return true;
@@ -41,17 +42,17 @@ public class ApiKeyInterceptor implements HandlerInterceptor {
         if (apiKey == null || !apiKey.equals(expectedApiKey)) {
             String path = request.getRequestURI();
             logger.warn("Ungültiger API-Key: {} für Pfad: {}", apiKey, path);
-            
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            
+
             // Je nach Sprache verschiedene Fehlermeldungen
             if (path.contains("/en") || path.endsWith("-en.html")) {
                 response.getWriter().write("{\"error\":\"Invalid API key\",\"status\":401}");
             } else {
                 response.getWriter().write("{\"error\":\"Ungültiger API-Key\",\"status\":401}");
             }
-            
+
             return false;
         }
 

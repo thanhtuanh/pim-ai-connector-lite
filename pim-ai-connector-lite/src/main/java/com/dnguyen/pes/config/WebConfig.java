@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -28,6 +29,27 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(apiKeyInterceptor)
                 .addPathPatterns("/api/**") // API-Pfade schützen
                 .excludePathPatterns("/api/health", "/api/info"); // Diese Endpunkte ausschließen falls benötigt
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Direkter Zugriff auf pim-config.xml ermöglichen
+        registry.addResourceHandler("/pim-config.xml")
+                .addResourceLocations("classpath:/");
+
+        // CSS- und JavaScript-Dateien im Verzeichnis static/css bzw. static/js
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
+
+        // Allgemeine statische Ressourcen
+        registry.addResourceHandler("/**")
+                .addResourceLocations(
+                        "classpath:/static/",
+                        "classpath:/public/",
+                        "classpath:/resources/",
+                        "classpath:/META-INF/resources/");
+
+        logger.info("Resource Handlers konfiguriert");
     }
 
     @Override

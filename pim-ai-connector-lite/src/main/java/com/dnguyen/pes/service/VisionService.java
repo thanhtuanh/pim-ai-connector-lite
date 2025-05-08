@@ -67,18 +67,19 @@ public class VisionService {
   public String generateGptDescription(Map<String, String> paramValues) {
     return generateGptDescription(paramValues, null);
   }
-  
+
   public String generateGptDescription(Map<String, String> paramValues, String language) {
     try {
       // Sprache bestimmen
-      String targetLanguage = (language != null && !language.isEmpty()) ? language : languageConfigService.getDefaultLanguage();
-      
+      String targetLanguage = (language != null && !language.isEmpty()) ? language
+          : languageConfigService.getDefaultLanguage();
+
       // GPT-Prompt aus der Konfiguration generieren
       String prompt = configService.generatePrompt(paramValues);
-      
+
       // Sprachspezifischen Suffix hinzufügen
       prompt += "\n\n" + languageConfigService.getPromptSuffix(targetLanguage);
-      
+
       logger.info("Generiere GPT-Beschreibung in Sprache '{}' mit Prompt: {}", targetLanguage, prompt);
 
       // Systemnachricht für die gewählte Sprache laden
@@ -118,20 +119,20 @@ public class VisionService {
       return getLocalizedMessage("gpt_error", language) + " " + e.getMessage();
     }
   }
-  
+
   /**
    * Gibt eine lokalisierte Fehlermeldung zurück
    */
   private String getLocalizedMessage(String messageKey) {
     return getLocalizedMessage(messageKey, languageConfigService.getDefaultLanguage());
   }
-  
+
   /**
    * Gibt eine lokalisierte Fehlermeldung in der angegebenen Sprache zurück
    */
   private String getLocalizedMessage(String messageKey, String language) {
     Map<String, Map<String, String>> messages = new HashMap<>();
-    
+
     // Deutsche Fehlermeldungen
     Map<String, String> deMessages = new HashMap<>();
     deMessages.put("no_vision_response", "⚠️ Keine Antwort von Google Vision erhalten.");
@@ -139,7 +140,7 @@ public class VisionService {
     deMessages.put("image_analysis_error", "❌ Fehler bei der Bildanalyse:");
     deMessages.put("no_gpt_response", "⚠️ Keine Antwort von GPT erhalten.");
     deMessages.put("gpt_error", "❌ Fehler bei der GPT-Anfrage:");
-    
+
     // Englische Fehlermeldungen
     Map<String, String> enMessages = new HashMap<>();
     enMessages.put("no_vision_response", "⚠️ No response received from Google Vision.");
@@ -147,16 +148,16 @@ public class VisionService {
     enMessages.put("image_analysis_error", "❌ Error during image analysis:");
     enMessages.put("no_gpt_response", "⚠️ No response received from GPT.");
     enMessages.put("gpt_error", "❌ Error in GPT request:");
-    
+
     messages.put("de", deMessages);
     messages.put("en", enMessages);
-    
+
     // Sprache bestimmen
     String normalizedLanguage = (language != null) ? language.toLowerCase() : "de";
     if (!messages.containsKey(normalizedLanguage)) {
       normalizedLanguage = "de"; // Fallback auf Deutsch
     }
-    
+
     // Nachricht zurückgeben oder Fallback wenn nicht gefunden
     return messages.get(normalizedLanguage).getOrDefault(messageKey, messageKey);
   }

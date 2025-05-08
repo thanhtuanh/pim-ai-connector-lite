@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="de">
 
 <head>
@@ -9,7 +10,7 @@
         content="Der PIM-AI Connector generiert hochwertige Produkttexte automatisch aus Ihren Produktdaten.">
     <meta name="keywords" content="PIM, DAM, KI, Produkttext, OpenAI, Vision API, E-Commerce, Microservice">
     <meta name="author" content="DNguyen" />
-   
+
     <link rel="icon" href="/assets/favicon.ico" type="image/x-icon" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96x96.png" />
@@ -17,205 +18,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f8f9fa;
-            color: #333;
-        }
-
-        header {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem 1rem;
-            text-align: center;
-        }
-
-        header img {
-            max-width: 120px;
-            margin-bottom: 0.5rem;
-        }
-
-        header h1 {
-            font-size: 1.8rem;
-            margin: 0.5rem 0;
-        }
-
-        header p {
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
-            color: #d1dce5;
-        }
-
-        main {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 1rem;
-        }
-
-        section {
-            margin-bottom: 2.5rem;
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        h2 {
-            color: #2c3e50;
-            font-size: 1.4rem;
-            border-left: 4px solid #3498db;
-            padding-left: 0.5rem;
-        }
-
-        a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        .note {
-            background: #fff3cd;
-            color: #856404;
-            padding: 1rem;
-            border-left: 5px solid #ffc107;
-            border-radius: 4px;
-            margin-top: 1rem;
-        }
-
-        pre {
-            background: #f4f4f4;
-            padding: 1rem;
-            overflow-x: auto;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        input,
-        button {
-            padding: 0.5rem;
-            font-size: 1rem;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
-        input:focus {
-            outline: 2px solid #3498db;
-        }
-
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #777;
-            padding: 2rem 1rem;
-        }
-
-        .parameter-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .info-box {
-            background-color: #e9f7ff;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 15px;
-        }
-
-        .tab {
-            padding: 8px 16px;
-            background-color: #f1f1f1;
-            cursor: pointer;
-            border-radius: 5px 5px 0 0;
-            margin-right: 5px;
-        }
-
-        .tab.active {
-            background-color: #3498db;
-            color: white;
-        }
-
-        .image-upload-container {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .image-upload-container:hover {
-            border-color: #3498db;
-        }
-
-        .image-preview {
-            max-width: 300px;
-            max-height: 200px;
-            margin: 10px auto;
-            display: none;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .option-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .option-buttons button {
-            width: 49%;
-        }
-
-        .api-key-input {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            align-items: center;
-        }
-
-        .api-key-input input {
-            padding: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            margin-right: 5px;
-            width: 150px;
-        }
-
-        .api-key-input button {
-            padding: 5px 10px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: auto;
-        }
-    </style>
+    <!-- Externe CSS-Datei einbinden -->
+    <link href="/static/css/styles.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -225,9 +29,18 @@
         <p>Automatisierte Produktbeschreibungen mit KI – schnell, konsistent, mehrsprachig.</p>
         <a href="#demo">Live-Demo starten</a>
 
+        <!-- Aktualisierter API-Key-Bereich mit Hilfelink -->
         <div class="api-key-input">
             <input type="text" id="api-key-input" placeholder="API-Key" value="demo-key">
             <button id="save-api-key">Speichern</button>
+            <a href="#" id="api-key-help" title="Hilfe zum API-Key" class="help-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </a>
         </div>
     </header>
 
@@ -307,72 +120,76 @@
                 </div>
             </form>
 
-            <h3>Ergebnis:</h3>
-            <pre id="responseArea">Noch keine Anfrage gesendet.</pre>
+            <!-- Neuer responsiver Ergebnisbereich mit Scrollbar -->
+            <div class="result-container">
+                <h3>Ergebnis:</h3>
+                <pre id="responseArea">Noch keine Anfrage gesendet.</pre>
+            </div>
         </section>
 
         <section>
             <h2>🧩 API & Integration für Entwickler & Projektmanager</h2>
-        
-            <p>Der PIM-AI-Connector ist eine REST-basierte Middleware. Die Integration ist einfach und erfolgt über HTTPS mit
+
+            <p>Der PIM-AI-Connector ist eine REST-basierte Middleware. Die Integration ist einfach und erfolgt über
+                HTTPS mit
                 JSON-Daten.</p>
-        
+
             <h3>🔐 Authentifizierung</h3>
             <p>
                 Alle Anfragen benötigen einen API-Key im Header:<br>
                 <code>X-API-Key: demo-key</code> (für Demozwecke)<br>
                 Eigene Keys erhalten Sie nach Projektstart.
             </p>
-        
+
             <h3>📥 Endpunkt: Nur Text (ohne Bild)</h3>
             <p><code>POST /api/enrich/gpt/{sprache}</code></p>
             <p><strong>Beispiel:</strong></p>
             <pre>
-        curl -X POST https://pim-ai-connector-lite.onrender.com/api/enrich/gpt/de \
-          -H "Content-Type: application/json" \
-          -H "X-API-Key: demo-key" \
-          -d '{
-            "p1": "Nike",
-            "p2": "Laufschuhe",
-            "p3": "Schwarz mit roten Akzenten",
-            "p4": "Synthetik und Mesh",
-            "p5": "EU 42"
-          }'
+curl -X POST https://pim-ai-connector-lite.onrender.com/api/enrich/gpt/de \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: demo-key" \
+  -d '{
+    "p1": "Nike",
+    "p2": "Laufschuhe",
+    "p3": "Schwarz mit roten Akzenten",
+    "p4": "Synthetik und Mesh",
+    "p5": "EU 42"
+  }'
             </pre>
-        
+
             <h3>🖼️ Endpunkt: Text + Bildanalyse</h3>
             <p><code>POST /api/vision/analyzeAndText/{sprache}</code></p>
             <p><strong>Zusätzlicher Parameter:</strong></p>
             <code>imageBase64</code> – Base64-kodiertes JPG/PNG-Bild
-        
+
             <h3>📤 Request-Body (Beispiel)</h3>
             <pre>{
-          "p1": "Nike",
-          "p2": "Laufschuhe",
-          "p3": "Schwarz mit roten Akzenten",
-          "p4": "Synthetik und Mesh",
-          "p5": "EU 42",
-          "imageBase64": "BASE64_STRING"
-        }</pre>
-        
+  "p1": "Nike",
+  "p2": "Laufschuhe",
+  "p3": "Schwarz mit roten Akzenten",
+  "p4": "Synthetik und Mesh",
+  "p5": "EU 42",
+  "imageBase64": "BASE64_STRING"
+}</pre>
+
             <h3>✅ Response (Beispiel)</h3>
             <pre>
-        "Diese schwarzen Nike-Laufschuhe aus atmungsaktivem Mesh und Synthetik bieten optimalen Komfort für sportliche Aktivitäten."
+"Diese schwarzen Nike-Laufschuhe aus atmungsaktivem Mesh und Synthetik bieten optimalen Komfort für sportliche Aktivitäten."
             </pre>
-        
+
             <h3>📌 Unterstützte Sprachen</h3>
             <ul>
                 <li><code>de</code> – Deutsch</li>
                 <li><code>en</code> – Englisch</li>
             </ul>
-        
+
             <h3>🛠️ Einfache Einbindung</h3>
             <ul>
                 <li>Via REST-Client (Postman, Insomnia)</li>
                 <li>Aus jedem Code (Java, Node.js, PHP, Python)</li>
                 <li>Aus PIM-System oder E-Commerce-Backend per HTTP POST</li>
             </ul>
-        
+
         </section>
 
 
@@ -384,7 +201,7 @@
                 <li>REST API, Docker, Microservices</li>
             </ul>
         </section>
-        
+
         <section>
             <h2>🎯 Zielgruppen</h2>
             <ul>
@@ -394,7 +211,7 @@
                 <li>E-Commerce-Plattformen</li>
             </ul>
         </section>
-        
+
         <section>
             <h2>📬 Kontakt & Lizenz</h2>
             <p>
@@ -410,514 +227,9 @@
         <p>© 2025 DNguyen – PIM-AI Connector Demo</p>
         <p><a href="index-en.html">🇬🇧 English Version</a> | <a href="dev.html">🔧 Entwickler-Doku</a></p>
     </footer>
-    <!-- JavaScript für die Produkttyp-Auswahl und Formularaktualisierung -->
-    <script>
-        // API-Key aus localStorage laden oder Standardwert verwenden
-        let API_KEY = localStorage.getItem('pim_ai_api_key') || "demo-key";
 
-        // API-Key-Element im Header aktualisieren
-        document.getElementById('api-key-input').value = API_KEY;
-
-        const form = document.getElementById("analyzeForm");
-        const parameterForm = document.getElementById("parameterForm");
-        const produktTypInfo = document.getElementById("produktTypInfo");
-        const responseArea = document.getElementById("responseArea");
-        const tabText = document.getElementById("tab-text");
-        const tabImage = document.getElementById("tab-image");
-        const imageUploadSection = document.getElementById("image-upload-section");
-        const dropArea = document.getElementById("dropArea");
-        const fileInput = document.getElementById("fileInput");
-        const imagePreview = document.getElementById("imagePreview");
-        const imageStatus = document.getElementById("imageStatus");
-        const resetBtn = document.getElementById("resetBtn");
-        const generateBtn = document.getElementById("generateBtn");
-        const productTypeSelect = document.getElementById("product-type-select");
-        const languageSelect = document.getElementById("language-select");
-        const languageSwitchBtn = document.getElementById("language-switch-btn");
-        const saveApiKeyBtn = document.getElementById("save-api-key");
-
-        // API-Key speichern, wenn der Speichern-Button geklickt wird
-        saveApiKeyBtn.addEventListener("click", function () {
-            const newApiKey = document.getElementById("api-key-input").value;
-            if (newApiKey && newApiKey.trim() !== '') {
-                API_KEY = newApiKey.trim();
-                localStorage.setItem('pim_ai_api_key', API_KEY);
-                alert(currentLanguage === "de" ? "API-Key gespeichert!" : "API key saved!");
-            }
-        });
-
-        // Funktion zum Hinzufügen des API-Keys zu allen Fetch-Anfragen
-        async function fetchWithApiKey(url, options = {}) {
-            // Stelle sicher, dass headers existiert
-            if (!options.headers) {
-                options.headers = {};
-            }
-
-            // Füge den API-Key-Header hinzu
-            options.headers['X-API-Key'] = API_KEY;
-
-            try {
-                const response = await fetch(url, options);
-
-                // Prüfe auf Unauthorized-Fehler (401)
-                if (response.status === 401) {
-                    const errorData = await response.json();
-                    // Zeige Fehlermeldung an
-                    alert(errorData.error || "API-Schlüssel ungültig oder fehlt");
-                    throw new Error("API-Authentifizierungsfehler");
-                }
-
-                return response;
-            } catch (error) {
-                console.error("Fehler bei der API-Anfrage:", error);
-                throw error;
-            }
-        }
-
-        // Aktivieren und deaktivieren der Bildupload-Funktionalität
-        let isImageAnalysisActive = false;
-        let base64Image = "";
-        let currentLanguage = "de"; // Standard-Sprache
-
-        // Produkttypen und ihre Demo-Daten
-        let produktTypen = [];
-        let demoDaten = {
-            "fashion": {
-                "p1": "Nike",
-                "p2": "Laufschuhe",
-                "p3": "Schwarz mit roten Akzenten",
-                "p4": "Synthetik und Mesh",
-                "p5": "EU 42",
-                "p6": "Sportlich",
-                "p7": "Modern",
-                "p8": "Sport und Freizeit",
-                "p9": "Mit feuchtem Tuch abwischen",
-                "p10": "Vietnam"
-            },
-            "electronics": {
-                "p1": "Samsung",
-                "p2": "Smartphone",
-                "p3": "Galaxy S25",
-                "p4": "6,7 Zoll AMOLED",
-                "p5": "256GB",
-                "p6": "Snapdragon 8 Gen 3",
-                "p7": "Android 14",
-                "p8": "24 Stunden",
-                "p9": "108MP Hauptkamera",
-                "p10": "WiFi 6, Bluetooth 5.3, 5G"
-            },
-            "furniture": {
-                "p1": "IKEA",
-                "p2": "Sofa",
-                "p3": "Dunkelgrau",
-                "p4": "Stoff, Holz",
-                "p5": "Skandinavisch",
-                "p6": "220x90x85 cm",
-                "p7": "250 kg",
-                "p8": "Stoffbezug abnehmbar und waschbar",
-                "p9": "Einfache Montage ohne Werkzeug",
-                "p10": "10 Jahre Garantie"
-            }
-        };
-
-        // Aktiver Produkttyp
-        let activeProduktTypId = "fashion";
-
-        // Tab-Wechsel Funktionalität
-        tabText.addEventListener("click", function () {
-            tabText.classList.add("active");
-            tabImage.classList.remove("active");
-            imageUploadSection.style.display = "none";
-            isImageAnalysisActive = false;
-            updateGenerateButtonText();
-        });
-
-        tabImage.addEventListener("click", function () {
-            tabText.classList.remove("active");
-            tabImage.classList.add("active");
-            imageUploadSection.style.display = "block";
-            isImageAnalysisActive = true;
-            updateGenerateButtonText();
-        });
-
-        // Funktion zum Aktualisieren des Texts auf dem Generieren-Button je nach Sprache und Modus
-        function updateGenerateButtonText() {
-            if (currentLanguage === "de") {
-                generateBtn.textContent = isImageAnalysisActive
-                    ? "Bild analysieren & Beschreibung generieren"
-                    : "Beschreibung generieren";
-            } else {
-                generateBtn.textContent = isImageAnalysisActive
-                    ? "Analyze Image & Generate Description"
-                    : "Generate Description";
-            }
-        }
-
-        // Drag & Drop und Bildupload
-        dropArea.addEventListener("click", function () {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener("change", function () {
-            handleFiles(this.files);
-        });
-
-        dropArea.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            dropArea.style.borderColor = "#3498db";
-        });
-
-        dropArea.addEventListener("dragleave", function () {
-            dropArea.style.borderColor = "#ccc";
-        });
-
-        dropArea.addEventListener("drop", function (e) {
-            e.preventDefault();
-            dropArea.style.borderColor = "#ccc";
-            handleFiles(e.dataTransfer.files);
-        });
-
-        function handleFiles(files) {
-            if (files.length > 0) {
-                const file = files[0];
-                if (!file.type.match('image.*')) {
-                    imageStatus.textContent = currentLanguage === "de"
-                        ? "❌ Bitte nur Bilddateien hochladen (JPG, PNG, etc.)"
-                        : "❌ Please upload image files only (JPG, PNG, etc.)";
-                    return;
-                }
-
-                // Größenbeschränkung (5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    imageStatus.textContent = currentLanguage === "de"
-                        ? "❌ Die Bilddatei ist zu groß (maximal 5 MB erlaubt)"
-                        : "❌ The image file is too large (maximum 5 MB allowed)";
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = "block";
-                    base64Image = e.target.result.split(',')[1]; // Base64 ohne MIME-Typ-Header
-                    imageStatus.textContent = currentLanguage === "de"
-                        ? "✅ Bild erfolgreich geladen: " + file.name
-                        : "✅ Image successfully loaded: " + file.name;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Zurücksetzen-Button
-        resetBtn.addEventListener("click", function () {
-            form.reset();
-            imagePreview.style.display = "none";
-            base64Image = "";
-            imageStatus.textContent = "";
-            responseArea.textContent = currentLanguage === "de"
-                ? "Formular zurückgesetzt. Noch keine Anfrage gesendet."
-                : "Form reset. No request sent yet.";
-
-            // Lade Demo-Daten für den aktuellen Produkttyp
-            loadDemoDataForProductType(activeProduktTypId);
-        });
-
-        // Produkttyp-Auswahl Event-Listener
-        productTypeSelect.addEventListener("change", function () {
-            activeProduktTypId = this.value;
-            loadDemoDataForProductType(activeProduktTypId);
-
-            // Aktualisiere die Produkttyp-Info
-            const selectedOption = this.options[this.selectedIndex];
-            const produktTypName = selectedOption.text;
-            updateProduktTypInfo(activeProduktTypId, produktTypName);
-        });
-
-        // Sprachumschaltung
-        languageSwitchBtn.addEventListener("click", function () {
-            const newLanguage = languageSelect.value;
-            changeLanguage(newLanguage);
-        });
-
-        function changeLanguage(language) {
-            // API-Aufruf, um die Sprache zu ändern
-            fetchWithApiKey(`/api/language/set?language=${language}`, {
-                method: 'POST'
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        currentLanguage = language;
-
-                        // UI-Texte aktualisieren
-                        updateUITexts();
-
-                        // Info-Box aktualisieren
-                        const selectedOption = productTypeSelect.options[productTypeSelect.selectedIndex];
-                        updateProduktTypInfo(activeProduktTypId, selectedOption.text);
-
-                        // Button-Text aktualisieren
-                        updateGenerateButtonText();
-                    } else {
-                        alert(currentLanguage === "de"
-                            ? "Fehler beim Ändern der Sprache: " + data.message
-                            : "Error changing language: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error("Sprachänderung fehlgeschlagen:", error);
-                    alert(currentLanguage === "de"
-                        ? "Fehler bei der Sprachänderung. Bitte versuchen Sie es später erneut."
-                        : "Error changing language. Please try again later.");
-                });
-        }
-
-        function updateUITexts() {
-                // UI-Texte je nach aktueller Sprache aktualisieren
-            if (currentLanguage === "de") {
-                // HIER IST DIE KORREKTUR: Anstatt den Haupttitel zu ändern, der bereits durch das HTML gesetzt ist,
-                // ändern wir nur die anderen UI-Texte
-                document.querySelector("label[for='language-select']").textContent = "Sprache wählen:";
-                document.querySelector("label[for='product-type-select']").textContent = "Produkttyp auswählen:";
-                document.querySelector("#tab-text").textContent = "Nur Text";
-                document.querySelector("#tab-image").textContent = "Mit Bildanalyse";
-                document.querySelector("#dropArea p").textContent = "📷 Produktbild hier ablegen oder klicken zum Auswählen";
-                document.querySelector("h3").textContent = "Ergebnis:";
-                document.querySelector("#language-switch-btn").textContent = "Sprache anwenden";
-                document.querySelector("#resetBtn").textContent = "Zurücksetzen";
-                document.getElementById("save-api-key").textContent = "Speichern";
-
-                if (responseArea.textContent.includes("Form reset") || responseArea.textContent.includes("No request")) {
-                    responseArea.textContent = "Noch keine Anfrage gesendet.";
-                }
-            } else {
-                // HIER IST DIE KORREKTUR: Der Haupttitel wird nicht angepasst, da er bereits im HTML steht
-                document.querySelector("label[for='language-select']").textContent = "Select language:";
-                document.querySelector("label[for='product-type-select']").textContent = "Select product type:";
-                document.querySelector("#tab-text").textContent = "Text Only";
-                document.querySelector("#tab-image").textContent = "With Image Analysis";
-                document.querySelector("#dropArea p").textContent = "📷 Drop product image here or click to select";
-                document.querySelector("h3").textContent = "Result:";
-                document.querySelector("#language-switch-btn").textContent = "Apply Language";
-                document.querySelector("#resetBtn").textContent = "Reset";
-                document.getElementById("save-api-key").textContent = "Save";
-
-                if (responseArea.textContent.includes("Formular zurückgesetzt") || responseArea.textContent.includes("Noch keine")) {
-                    responseArea.textContent = "No request sent yet.";
-                }
-            }
-
-            updateGenerateButtonText();
-        }
-
-        // Lade alle verfügbaren Produkttypen
-        async function loadProductTypes() {
-            try {
-                // Hole alle Produkttypen aus der Konfiguration
-                const response = await fetchWithApiKey('/api/vision/allProductTypes');
-                const data = await response.json();
-
-                // Produkttypen speichern
-                produktTypen = data.produktTypen || [];
-
-                // Dropdown-Auswahl befüllen
-                productTypeSelect.innerHTML = '';
-                produktTypen.forEach(typ => {
-                    const option = document.createElement('option');
-                    option.value = typ.id;
-                    option.textContent = typ.name;
-                    // Setze den aktiven Produkttyp als ausgewählt
-                    if (typ.id === activeProduktTypId) {
-                        option.selected = true;
-                    }
-                    productTypeSelect.appendChild(option);
-                });
-
-                // Aktuelle Sprache abrufen
-                const langResponse = await fetchWithApiKey('/api/language/current');
-                const langData = await langResponse.json();
-                currentLanguage = langData.language || "de";
-
-                // Sprachauswahl aktualisieren
-                languageSelect.value = currentLanguage;
-
-                // UI-Texte entsprechend der Sprache aktualisieren
-                updateUITexts();
-
-            } catch (err) {
-                console.error("Fehler beim Laden der Produkttypen:", err);
-
-                // Notfall-Optionen, wenn der Server nicht antwortet
-                productTypeSelect.innerHTML = `
-                <option value="fashion">Bekleidung</option>
-                <option value="electronics">Elektronik</option>
-                <option value="furniture">Möbel</option>
-            `;
-            }
-        }
-
-        // Lade Demo-Daten für den ausgewählten Produkttyp
-        function loadDemoDataForProductType(produktTypId) {
-            // Default auf den ersten Produkttyp, falls der angeforderte nicht existiert
-            if (!demoDaten[produktTypId]) {
-                produktTypId = Object.keys(demoDaten)[0];
-            }
-
-            // Aktiven Produkttyp speichern
-            activeProduktTypId = produktTypId;
-
-            // Demo-Daten für den aktuellen Produkttyp
-            const typDemoDaten = demoDaten[produktTypId] || {};
-
-            // Konfiguration für den Produkttyp laden
-            fetchWithApiKey(`/api/vision/config?type=${produktTypId}`)
-                .then(response => response.json())
-                .then(config => {
-                    // Parameter-Felder aktualisieren
-                    parameterForm.innerHTML = '';
-
-                    for (let i = 1; i <= 10; i++) {
-                        const paramKey = `p${i}`;
-                        const paramName = config.parameter[paramKey];
-
-                        if (paramName && paramName.trim() !== '') {
-                            const demoWert = typDemoDaten[paramKey] || "";
-                            const label = document.createElement('label');
-                            label.innerHTML = `${paramName}: <input type="text" name="${paramKey}" value="${demoWert}" />`;
-                            parameterForm.appendChild(label);
-                        }
-                    }
-
-                    // Produkttyp-Info aktualisieren
-                    updateProduktTypInfo(produktTypId, config.produktTypName);
-                })
-                .catch(err => {
-                    console.error("Fehler beim Laden der Konfiguration:", err);
-
-                    // Notfall-Felder anzeigen, wenn der Server nicht antwortet
-                    parameterForm.innerHTML = '';
-                    for (let i = 1; i <= 10; i++) {
-                        const paramKey = `p${i}`;
-                        if (typDemoDaten[paramKey]) {
-                            const label = document.createElement('label');
-                            label.innerHTML = `Parameter ${i}: <input type="text" name="${paramKey}" value="${typDemoDaten[paramKey]}" />`;
-                            parameterForm.appendChild(label);
-                        }
-                    }
-
-                    updateProduktTypInfo(produktTypId, getProductTypeName(produktTypId));
-                });
-        }
-
-        function getProductTypeName(id) {
-            // Fallback-Namen für die Produkttypen
-            const names = {
-                "fashion": "Bekleidung",
-                "electronics": "Elektronik",
-                "furniture": "Möbel"
-            };
-            return names[id] || id;
-        }
-
-        function updateProduktTypInfo(id, name) {
-            let infoText;
-            if (currentLanguage === "de") {
-                infoText = `<strong>Aktiver Produkttyp:</strong> ${name} (ID: ${id})`;
-            } else {
-                infoText = `<strong>Active Product Type:</strong> ${name} (ID: ${id})`;
-            }
-            produktTypInfo.innerHTML = infoText;
-        }
-
-        // Formular-Submission
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            // Parameter-Werte sammeln
-            const formData = new FormData(form);
-            const payload = {};
-
-            // Alle Eingabefelder im Formular durchgehen
-            for (const [key, value] of formData.entries()) {
-                payload[key] = value;
-            }
-
-            // Base64-Bild hinzufügen, wenn vorhanden
-            payload.imageBase64 = base64Image;
-
-            // Anzeigen, dass die Anfrage gesendet wird
-            responseArea.textContent = currentLanguage === "de"
-                ? "⏳ Anfrage wird gesendet..."
-                : "⏳ Sending request...";
-
-            // Entscheiden, welcher Endpunkt verwendet wird
-            if (isImageAnalysisActive && base64Image) {
-                sendRequestWithImage(payload);
-            } else {
-                sendRequest(payload);
-            }
-        });
-
-        async function sendRequest(payload) {
-            try {
-                // Endpunkt mit Sprachparameter
-                const endpoint = `/api/enrich/gpt/${currentLanguage}`;
-
-                // GPT-Endpunkt direkt verwenden, da keine Bilder gesendet werden
-                const res = await fetchWithApiKey(endpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                const text = await res.text();
-                responseArea.textContent = text;
-            } catch (err) {
-                responseArea.textContent = currentLanguage === "de"
-                    ? "❌ Fehler: " + err.message
-                    : "❌ Error: " + err.message;
-            }
-        }
-
-        async function sendRequestWithImage(payload) {
-            try {
-                // Endpunkt mit Sprachparameter
-                const endpoint = `/api/vision/analyzeAndText/${currentLanguage}`;
-
-                // Bild-Analyse-Endpunkt verwenden
-                const res = await fetchWithApiKey(endpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                const text = await res.text();
-                responseArea.textContent = text;
-            } catch (err) {
-                responseArea.textContent = currentLanguage === "de"
-                    ? "❌ Fehler bei der Bildanalyse: " + err.message
-                    : "❌ Error during image analysis: " + err.message;
-            }
-        }
-
-        // Beim Laden der Seite
-        document.addEventListener('DOMContentLoaded', function () {
-            // Produkttypen laden
-            loadProductTypes();
-
-            // Aktuelle Sprache laden und UI aktualisieren
-            fetchWithApiKey('/api/language/current')
-                .then(response => response.json())
-                .then(data => {
-                    currentLanguage = data.language || "de";
-                    languageSelect.value = currentLanguage;
-                    updateUITexts();
-                })
-                .catch(err => {
-                    console.error("Fehler beim Laden der Sprache:", err);
-                });
-        });
-    </script>
+    <!-- Externe JavaScript-Datei einbinden -->
+    <script src="/static/js/main.js"></script>
 </body>
 
 </html>

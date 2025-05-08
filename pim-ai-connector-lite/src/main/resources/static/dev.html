@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="de">
 
 <head>
@@ -133,27 +134,27 @@
             <p><code>POST /api/enrich/gpt/{sprache}</code></p>
             <p><strong>Beispiel:</strong></p>
             <pre><code>curl -X POST https://pim-ai-connector-lite.onrender.com/api/enrich/gpt/de \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: demo-key" \
-  -d '{
-    "p1": "Nike",
-    "p2": "Laufschuhe",
-    "p3": "Schwarz mit roten Akzenten",
-    "p4": "Synthetik und Mesh",
-    "p5": "EU 42"
-  }'</code></pre>
+-H "Content-Type: application/json" \
+-H "X-API-Key: demo-key" \
+-d '{
+"p1": "Nike",
+"p2": "Laufschuhe",
+"p3": "Schwarz mit roten Akzenten",
+"p4": "Synthetik und Mesh",
+"p5": "EU 42"
+}'</code></pre>
 
             <h3>Text + Bildanalyse</h3>
             <p><code>POST /api/vision/analyzeAndText/{sprache}</code></p>
             <p><strong>Zusätzlicher Parameter:</strong> <code>imageBase64</code> – Base64-kodiertes JPG/PNG-Bild</p>
             <p><strong>Beispiel:</strong></p>
             <pre><code>{
-  "p1": "Nike",
-  "p2": "Laufschuhe",
-  "p3": "Schwarz mit roten Akzenten",
-  "p4": "Synthetik und Mesh",
-  "p5": "EU 42",
-  "imageBase64": "BASE64_STRING"
+"p1": "Nike",
+"p2": "Laufschuhe",
+"p3": "Schwarz mit roten Akzenten",
+"p4": "Synthetik und Mesh",
+"p5": "EU 42",
+"imageBase64": "BASE64_STRING"
 }</code></pre>
         </section>
 

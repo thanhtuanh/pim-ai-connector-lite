@@ -24,21 +24,21 @@ public class LanguageController {
     public ResponseEntity<Map<String, String>> getCurrentLanguage() {
         String currentLanguage = languageConfigService.getDefaultLanguage();
         logger.info("Aktuelle Sprache abgefragt: {}", currentLanguage);
-        
+
         Map<String, String> response = new HashMap<>();
         response.put("language", currentLanguage);
         response.put("name", getCurrentLanguageName(currentLanguage));
-        
+
         return ResponseEntity.ok(response);
     }
-    
+
     @PostMapping("/set")
     public ResponseEntity<Map<String, Object>> setLanguage(@RequestParam(name = "language") String language) {
         logger.info("Sprachänderungsanfrage: {}", language);
-        
+
         Map<String, Object> response = new HashMap<>();
         boolean success = languageConfigService.setDefaultLanguage(language);
-        
+
         if (success) {
             response.put("success", true);
             response.put("language", language);
@@ -52,18 +52,18 @@ public class LanguageController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-    
+
     @GetMapping("/supported")
     public ResponseEntity<Map<String, Object>> getSupportedLanguages() {
         logger.info("Unterstützte Sprachen abgefragt");
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("current", languageConfigService.getDefaultLanguage());
         response.put("languages", languageConfigService.getSupportedLanguages());
-        
+
         return ResponseEntity.ok(response);
     }
-    
+
     private String getCurrentLanguageName(String languageCode) {
         return languageConfigService.getSupportedLanguages().getOrDefault(languageCode, languageCode);
     }

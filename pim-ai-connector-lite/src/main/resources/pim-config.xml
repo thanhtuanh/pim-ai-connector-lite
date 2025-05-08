@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <pim-configuration>
     <produkttypen>
         <produkttyp id="fashion">
@@ -16,7 +17,8 @@
                 <p10>Herkunftsland</p10>
             </parameter>
             <prompt-template>
-                Erstelle eine detaillierte Produktbeschreibung für ein Kleidungsstück mit folgenden Merkmalen:
+                Erstelle eine detaillierte Produktbeschreibung für ein Kleidungsstück mit folgenden
+                Merkmalen:
                 - Marke: {p1}
                 - Kategorie: {p2}
                 - Farbe: {p3}
@@ -27,11 +29,23 @@
                 - Anlass: {p8}
                 - Pflegehinweise: {p9}
                 - Herkunftsland: {p10}
-
-                Die Beschreibung sollte modisch und ansprechend sein und die Vorzüge des Kleidungsstücks hervorheben.
+                Die Beschreibung sollte modisch und ansprechend sein und die Vorzüge des
+                Kleidungsstücks hervorheben.
             </prompt-template>
+            <demo>
+                <p1>Nike</p1>
+                <p2>Laufschuhe</p2>
+                <p3>Schwarz mit roten Akzenten</p3>
+                <p4>Synthetik und Mesh</p4>
+                <p5>EU 42</p5>
+                <p6>Sportlich</p6>
+                <p7>Modern</p7>
+                <p8>Sport und Freizeit</p8>
+                <p9>Mit feuchtem Tuch abwischen</p9>
+                <p10>Vietnam</p10>
+            </demo>
         </produkttyp>
-        
+
         <produkttyp id="electronics">
             <n>Elektronik</n>
             <parameter>
@@ -58,11 +72,23 @@
                 - Akkulaufzeit: {p8}
                 - Kamera: {p9}
                 - Konnektivität: {p10}
-
-                Die Beschreibung sollte die technischen Vorzüge und die Benutzerfreundlichkeit betonen und die Zielgruppe technikaffiner Nutzer ansprechen.
+                Die Beschreibung sollte die technischen Vorzüge und die Benutzerfreundlichkeit
+                betonen und die Zielgruppe technikaffiner Nutzer ansprechen.
             </prompt-template>
+            <demo>
+                <p1>Samsung</p1>
+                <p2>Smartphone</p2>
+                <p3>Galaxy S25</p3>
+                <p4>6,7 Zoll AMOLED</p4>
+                <p5>256GB</p5>
+                <p6>Snapdragon 8 Gen 3</p6>
+                <p7>Android 14</p7>
+                <p8>24 Stunden</p8>
+                <p9>108MP Hauptkamera</p9>
+                <p10>WiFi 6, Bluetooth 5.3, 5G</p10>
+            </demo>
         </produkttyp>
-        
+
         <produkttyp id="furniture">
             <n>Möbel</n>
             <parameter>
@@ -89,9 +115,107 @@
                 - Pflege: {p8}
                 - Montage: {p9}
                 - Garantie: {p10}
-
-                Die Beschreibung sollte die Qualität, die Ästhetik und den praktischen Nutzen des Möbelstücks hervorheben und als ideale Ergänzung für moderne Wohnräume präsentieren.
+                Die Beschreibung sollte die Qualität, die Ästhetik und den praktischen Nutzen des
+                Möbelstücks hervorheben und als ideale Ergänzung für moderne Wohnräume präsentieren.
             </prompt-template>
+            <demo>
+                <p1>IKEA</p1>
+                <p2>Sofa</p2>
+                <p3>Dunkelgrau</p3>
+                <p4>Stoff, Holz</p4>
+                <p5>Skandinavisch</p5>
+                <p6>220x90x85 cm</p6>
+                <p7>250 kg</p7>
+                <p8>Stoffbezug abnehmbar und waschbar</p8>
+                <p9>Einfache Montage ohne Werkzeug</p9>
+                <p10>10 Jahre Garantie</p10>
+            </demo>
         </produkttyp>
+
+        <produkttyp id="books">
+            <n>Bücher</n>
+            <parameter>
+                <p1>Titel</p1>
+                <p2>Autor</p2>
+                <p3>Genre</p3>
+                <p4>Seitenanzahl</p4>
+                <p5>Verlag</p5>
+                <p6>Erscheinungsjahr</p6>
+                <p7>ISBN</p7>
+                <p8>Sprache</p8>
+                <p9>Einband</p9>
+                <p10>Zielgruppe</p10>
+            </parameter>
+            <prompt-template>
+                Erstelle eine ansprechende Buchbeschreibung für folgendes Buch:
+                - Titel: {p1}
+                - Autor: {p2}
+                - Genre: {p3}
+                - Seitenanzahl: {p4}
+                - Verlag: {p5}
+                - Erscheinungsjahr: {p6}
+                - ISBN: {p7}
+                - Sprache: {p8}
+                - Einband: {p9}
+                - Zielgruppe: {p10}
+                Die Beschreibung sollte Interesse wecken und die wichtigsten Merkmale des Buches
+                hervorheben.
+            </prompt-template>
+            <demo>
+                <p1>Der Schwarm</p1>
+                <p2>Frank Schätzing</p2>
+                <p3>Science Fiction</p3>
+                <p4>896</p4>
+                <p5>Fischer Verlag</p5>
+                <p6>2004</p6>
+                <p7>978-3596162409</p7>
+                <p8>Deutsch</p8>
+                <p9>Taschenbuch</p9>
+                <p10>Erwachsene</p10>
+            </demo>
+        </produkttyp>
+
+        <produkttyp id="toys">
+            <n>Spielzeug</n>
+            <parameter>
+                <p1>Marke</p1>
+                <p2>Produkttyp</p2>
+                <p3>Altersempfehlung</p3>
+                <p4>Material</p4>
+                <p5>Farbe</p5>
+                <p6>Funktionen</p6>
+                <p7>Sicherheitshinweise</p7>
+                <p8>Größe</p8>
+                <p9>Gewicht</p9>
+                <p10>Besonderheiten</p10>
+            </parameter>
+            <prompt-template>
+                Verfasse eine kindgerechte Produktbeschreibung für folgendes Spielzeug:
+                - Marke: {p1}
+                - Produkttyp: {p2}
+                - Altersempfehlung: {p3}
+                - Material: {p4}
+                - Farbe: {p5}
+                - Funktionen: {p6}
+                - Sicherheitshinweise: {p7}
+                - Größe: {p8}
+                - Gewicht: {p9}
+                - Besonderheiten: {p10}
+                Der Text soll Vertrauen schaffen, Eltern informieren und Kinder begeistern.
+            </prompt-template>
+            <demo>
+                <p1>LEGO</p1>
+                <p2>Bausteinset</p2>
+                <p3>Ab 5 Jahren</p3>
+                <p4>Kunststoff (BPA-frei)</p4>
+                <p5>Bunt</p5>
+                <p6>Bauen, Umgestalten, Spielen</p6>
+                <p7>Ohne verschluckbare Kleinteile</p7>
+                <p8>25 x 20 x 5 cm</p8>
+                <p9>0,8 kg</p9>
+                <p10>Fördert Kreativität und Feinmotorik</p10>
+            </demo>
+        </produkttyp>
+
     </produkttypen>
 </pim-configuration>

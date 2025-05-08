@@ -20,7 +20,8 @@ public class EnrichmentController {
         private final ConfigService configService;
         private final LanguageConfigService languageConfigService;
 
-        public EnrichmentController(VisionService visionService, ConfigService configService, LanguageConfigService languageConfigService) {
+        public EnrichmentController(VisionService visionService, ConfigService configService,
+                        LanguageConfigService languageConfigService) {
                 this.visionService = visionService;
                 this.configService = configService;
                 this.languageConfigService = languageConfigService;
@@ -30,22 +31,22 @@ public class EnrichmentController {
         public ResponseEntity<String> enrichWithGpt(@RequestBody ProduktTypParameter request) {
                 return enrichWithGptLanguage(request, null);
         }
-        
+
         // WICHTIG: Parameter explizit benennen mit name="language"
         @PostMapping("/gpt/{language}")
         public ResponseEntity<String> enrichWithGptLanguage(
-                @RequestBody ProduktTypParameter request, 
-                @PathVariable(name = "language") String language) {
-                
+                        @RequestBody ProduktTypParameter request,
+                        @PathVariable(name = "language") String language) {
+
                 try {
                         // Sprachcode ermitteln (falls angegeben)
                         String targetLanguage = language;
                         if (targetLanguage == null || targetLanguage.isEmpty()) {
                                 targetLanguage = languageConfigService.getDefaultLanguage();
                         }
-                        
-                        logger.info("GPT-Anfrage empfangen für Produkttyp: {} in Sprache: {}", 
-                                configService.getProduktTypName(), targetLanguage);
+
+                        logger.info("GPT-Anfrage empfangen für Produkttyp: {} in Sprache: {}",
+                                        configService.getProduktTypName(), targetLanguage);
 
                         // Parameter-Werte in eine Map umwandeln
                         Map<String, String> paramValues = new HashMap<>();
@@ -75,7 +76,7 @@ public class EnrichmentController {
 
                         // Produkttyp-Name holen
                         String produktTypName = configService.getProduktTypName();
-                        
+
                         // Überschrift lokalisieren
                         String heading;
                         if ("en".equals(targetLanguage)) {
@@ -90,14 +91,14 @@ public class EnrichmentController {
                         return ResponseEntity.ok(response.toString());
                 } catch (Exception e) {
                         logger.error("Fehler bei der GPT-Anfrage: " + e.getMessage(), e);
-                        
+
                         String errorMsg;
                         if (language != null && "en".equals(language.toLowerCase())) {
                                 errorMsg = "❌ Error in GPT request: " + e.getMessage();
                         } else {
                                 errorMsg = "❌ Fehler bei der GPT-Anfrage: " + e.getMessage();
                         }
-                        
+
                         return ResponseEntity.internalServerError().body(errorMsg);
                 }
         }
