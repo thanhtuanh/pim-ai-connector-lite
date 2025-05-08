@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PIM-AI-Connector – KI-basierte Texte für Produktdaten</title>
     <meta name="description"
-        content="Der PIM-AI-Connector erstellt automatisch hochwertige, SEO-optimierte Produkttexte aus strukturierten Daten. Ideal für PIM, DAM und E-Commerce-Systeme." />
+        content="Der PIM-AI Connector generiert hochwertige Produkttexte automatisch aus Ihren Produktdaten.">
+    <meta name="keywords" content="PIM, DAM, KI, Produkttext, OpenAI, Vision API, E-Commerce, Microservice">
     <meta name="author" content="DNguyen" />
-    <meta name="keywords"
-        content="PIM, Produktinformationen, KI, E-Commerce, DAM, OpenAI, Java, Microservices, Spring Boot, Produkttexte, Content Automation" />
-    <!-- Favicons -->
+   
     <link rel="icon" href="/assets/favicon.ico" type="image/x-icon" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96x96.png" />
@@ -222,8 +221,9 @@
 <body>
     <header>
         <img src="/assets/pim-ai-logo.png" alt="PIM AI Logo" />
-        <h1>PIM-AI-Connector – KI-basierte Texte für Produktdaten</h1>
-        <p>Ideal für PIM, DAM, Onlineshops und digitale Kataloge</p>
+        <h1>PIM-AI-Connector Lite</h1>
+        <p>Automatisierte Produktbeschreibungen mit KI – schnell, konsistent, mehrsprachig.</p>
+        <a href="#demo">Live-Demo starten</a>
 
         <div class="api-key-input">
             <input type="text" id="api-key-input" placeholder="API-Key" value="demo-key">
@@ -235,45 +235,22 @@
     <main>
 
         <section>
-            <h2>🧠 So funktioniert der PIM-AI Connector – Von Daten zu Inhalten</h2>
-
+            <h2>🧠 So funktioniert der PIM-AI Connector</h2>
             <p>
-                Der <strong>PIM-AI Connector</strong> ist eine KI-gestützte Middleware, die strukturierte Produktdaten,
-                bestehende Beschreibungen und Produktbilder verarbeitet, analysiert und in hochwertige, marketingfertige
-                Inhalte
-                umwandelt.<br><br>
-
-                🔧 <strong>Für Entwickler:</strong> Der Connector basiert auf einer Microservice-Architektur (Spring
-                Boot,
-                REST),
-                empfängt strukturierte JSON-Daten via API und verarbeitet diese mithilfe von OpenAI. Optional werden
-                Produktbilder mit Google Vision analysiert.<br><br>
-
-                🛍️ <strong>Für Anwender und Kunden:</strong> Sie liefern einfach Ihre bestehenden Produktinformationen
-                –
-                der PIM-AI Connector erstellt daraus automatisch optimierte Texte, Bildvorschläge und Inhalte für Ihren
-                Webshop,
-                Ihr PIM-System oder Ihren Katalog.
+                Der <strong>PIM-AI Connector</strong> wandelt strukturierte Produktdaten, bestehende Texte und Bilder in
+                hochwertige, SEO-optimierte Inhalte um – ideal für Webshops, Kataloge und PIM-Systeme.
             </p>
-            <p style="margin-top: 1rem;">
-                📘 <strong>Beispiel:</strong><br>
-                Sie geben den Titel <em>„Der Herr der Ringe"</em>, den Autor <em>„J.R.R. Tolkien"</em>, das Genre
-                <em>„Fantasy"</em>
-                und einige Schlagwörter an.<br>
-                Der PIM-AI Connector generiert daraus automatisch eine verkaufsstarke Produktbeschreibung – inklusive
-                Zielgruppenansprache und SEO-relevanter Begriffe.
-            </p>
-
-
-            <div style="text-align: center; margin-top: 1.5rem;">
-                <img src="/assets/pim-ai-overview.png" alt="PIM-AI Connector Funktionsweise"
-                    style="max-width: 300px; width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e0e0e0;" />
-                <p style="font-size: 0.9rem; color: #555;">🔁 Von Daten zu Inhalten – vollautomatisch & intelligent</p>
-            </div>
+            <ul>
+                <li>🔧 <strong>Für Entwickler:</strong> Microservice-Architektur (Spring Boot), REST API, JSON-Input,
+                    OpenAI & Google Vision Integration.</li>
+                <li>📈 <strong>Für Projektmanager:</strong> Sofort einsatzbereit, kein Texter mehr nötig, mehrsprachig
+                    einsetzbar.</li>
+                <li>🛍️ <strong>Für E-Commerce:</strong> Einheitliche, verkaufsstarke Inhalte in Sekunden.</li>
+            </ul>
         </section>
 
         <!-- Aktualisierter Abschnitt "Live-Demo Produktbeschreibung generieren" -->
-        <section>
+        <section id="demo">
             <h2>🔠 🔗 Live-Demo Produktbeschreibung generieren</h2>
             <p>
                 Mit unserem PIM-AI Connector können Sie sofort hochwertige Produktbeschreibungen erstellen.
@@ -335,88 +312,103 @@
         </section>
 
         <section>
-            <h2>💻 Beispiel cURL Requests</h2>
-
-            <h3>Ohne Bild:</h3>
-            <pre>curl -X POST http://localhost:8080/api/enrich/gpt \
--H "Content-Type: application/json" \
--H "X-API-Key: demo-key" \
--d '{
-  "p1": "Nike",
-  "p2": "Laufschuhe",
-  "p3": "Schwarz mit roten Akzenten",
-  "p4": "Synthetik und Mesh",
-  "p5": "EU 42"
-}'</pre>
-
-            <h3>Mit Bild:</h3>
-            <pre>curl -X POST http://localhost:8080/api/vision/analyzeAndText \
--H "Content-Type: application/json" \
--H "X-API-Key: demo-key" \
--d '{
-  "p1": "Nike",
-  "p2": "Laufschuhe",
-  "p3": "Schwarz mit roten Akzenten",
-  "p4": "Synthetik und Mesh",
-  "p5": "EU 42",
-  "imageBase64": "BASE64_ENCODED_IMAGE_DATA"
-}'</pre>
+            <h2>🧩 API & Integration für Entwickler & Projektmanager</h2>
+        
+            <p>Der PIM-AI-Connector ist eine REST-basierte Middleware. Die Integration ist einfach und erfolgt über HTTPS mit
+                JSON-Daten.</p>
+        
+            <h3>🔐 Authentifizierung</h3>
+            <p>
+                Alle Anfragen benötigen einen API-Key im Header:<br>
+                <code>X-API-Key: demo-key</code> (für Demozwecke)<br>
+                Eigene Keys erhalten Sie nach Projektstart.
+            </p>
+        
+            <h3>📥 Endpunkt: Nur Text (ohne Bild)</h3>
+            <p><code>POST /api/enrich/gpt/{sprache}</code></p>
+            <p><strong>Beispiel:</strong></p>
+            <pre>
+        curl -X POST https://pim-ai-connector-lite.onrender.com/api/enrich/gpt/de \
+          -H "Content-Type: application/json" \
+          -H "X-API-Key: demo-key" \
+          -d '{
+            "p1": "Nike",
+            "p2": "Laufschuhe",
+            "p3": "Schwarz mit roten Akzenten",
+            "p4": "Synthetik und Mesh",
+            "p5": "EU 42"
+          }'
+            </pre>
+        
+            <h3>🖼️ Endpunkt: Text + Bildanalyse</h3>
+            <p><code>POST /api/vision/analyzeAndText/{sprache}</code></p>
+            <p><strong>Zusätzlicher Parameter:</strong></p>
+            <code>imageBase64</code> – Base64-kodiertes JPG/PNG-Bild
+        
+            <h3>📤 Request-Body (Beispiel)</h3>
+            <pre>{
+          "p1": "Nike",
+          "p2": "Laufschuhe",
+          "p3": "Schwarz mit roten Akzenten",
+          "p4": "Synthetik und Mesh",
+          "p5": "EU 42",
+          "imageBase64": "BASE64_STRING"
+        }</pre>
+        
+            <h3>✅ Response (Beispiel)</h3>
+            <pre>
+        "Diese schwarzen Nike-Laufschuhe aus atmungsaktivem Mesh und Synthetik bieten optimalen Komfort für sportliche Aktivitäten."
+            </pre>
+        
+            <h3>📌 Unterstützte Sprachen</h3>
+            <ul>
+                <li><code>de</code> – Deutsch</li>
+                <li><code>en</code> – Englisch</li>
+            </ul>
+        
+            <h3>🛠️ Einfache Einbindung</h3>
+            <ul>
+                <li>Via REST-Client (Postman, Insomnia)</li>
+                <li>Aus jedem Code (Java, Node.js, PHP, Python)</li>
+                <li>Aus PIM-System oder E-Commerce-Backend per HTTP POST</li>
+            </ul>
+        
         </section>
+
 
         <section>
             <h2>📦 Tech-Stack</h2>
             <ul>
                 <li>Java 17, Spring Boot 3</li>
-                <li>REST APIs, Microservices</li>
-                <li>OpenAI API Integration</li>
-                <li>Google Vision API</li>
-                <li>Docker & docker-compose</li>
+                <li>OpenAI, Google Vision API</li>
+                <li>REST API, Docker, Microservices</li>
             </ul>
         </section>
-
+        
         <section>
             <h2>🎯 Zielgruppen</h2>
             <ul>
                 <li>PIM-/DAM-Systemanbieter</li>
                 <li>Onlineshop-Betreiber</li>
-                <li>Content-Manager</li>
-                <li>E-Commerce-Plattformen – sparen Zeit & Kosten für Content-Erstellung</li>
-                <li>Content-Teams – erhalten sofort veröffentlichungsfertige Texte</li>
+                <li>Content-Teams</li>
+                <li>E-Commerce-Plattformen</li>
             </ul>
         </section>
-
+        
         <section>
-            <h2>🔒 Code & Kontakt</h2>
+            <h2>📬 Kontakt & Lizenz</h2>
             <p>
-                Der <strong>PIM-AI Connector</strong> wurde mit Java, Spring Boot und Angular als skalierbarer
-                Microservice
-                entwickelt.<br>
-                Dieses Projekt ist urheberrechtlich geschützt und steht unter einer privaten Lizenz.<br>
-                Eine Nutzung in Kundenprojekten, kommerzielle Weiterverwendung oder Integration in
-                PIM-/E-Commerce-Systeme ist
-                ausschließlich im Rahmen eines Lizenz- oder Kooperationsmodells möglich.<br><br>
-                👉 Bei Interesse an einer Lizenz, technischen Details oder einer Partnerschaft kontaktieren Sie uns
-                bitte direkt
-                unter:
-                <a href="mailto:n.thanh@gmx.de">n.thanh@gmx.de</a>
-            </p>
-
-            <p>
-                <a href="dev.html" style="font-weight: bold;">🔧 Zur Entwicklerdokumentation</a> – Detaillierte
-                Informationen zur Integration und Verwendung des PIM-AI-Connectors in eigenen Projekten.
+                Sie möchten den PIM-AI Connector in Ihrem Unternehmen einsetzen oder integrieren?<br>
+                Schreiben Sie uns unter: <a href="mailto:n.thanh@gmx.de">n.thanh@gmx.de</a><br>
+                ➕ <a href="dev.html">Zur technischen Dokumentation</a>
             </p>
         </section>
 
     </main>
 
     <footer>
-        © 2025 DNguyen – PIM-AI Connector Demo<br>
-        <a href="index-en.html">🇬🇧 English Version</a> | <a href="dev.html">🔧 Entwicklerdokumentation</a>
-        <p style="font-size: 0.8rem; margin-top: 1rem;">
-            📄 Diese Web-Demo dient ausschließlich zu Demonstrations- und Informationszwecken.<br>
-            Der Quellcode und die Inhalte sind urheberrechtlich geschützt © 2025 DNguyen.<br>
-            Eine kommerzielle Nutzung oder Weiterverwendung ist ohne ausdrückliche Genehmigung nicht gestattet.
-        </p>
+        <p>© 2025 DNguyen – PIM-AI Connector Demo</p>
+        <p><a href="index-en.html">🇬🇧 English Version</a> | <a href="dev.html">🔧 Entwickler-Doku</a></p>
     </footer>
     <!-- JavaScript für die Produkttyp-Auswahl und Formularaktualisierung -->
     <script>
