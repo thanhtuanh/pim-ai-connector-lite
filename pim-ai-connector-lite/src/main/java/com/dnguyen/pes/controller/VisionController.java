@@ -16,13 +16,14 @@ import java.util.Map;
 @RequestMapping("/api/vision")
 public class VisionController {
 
+    private static final String PRODUKT_TYP_ID = "produktTypId";
+
     private static final Logger logger = LoggerFactory.getLogger(VisionController.class);
     private final VisionService visionService;
     private final ConfigService configService;
     private final LanguageConfigService languageConfigService;
 
-    public VisionController(VisionService visionService, ConfigService configService,
-            LanguageConfigService languageConfigService) {
+    public VisionController(VisionService visionService, ConfigService configService, LanguageConfigService languageConfigService) {
         this.visionService = visionService;
         this.configService = configService;
         this.languageConfigService = languageConfigService;
@@ -32,16 +33,16 @@ public class VisionController {
     @GetMapping("/config")
     public ResponseEntity<Map<String, Object>> getConfig(@RequestParam(name = "type", required = false) String type) {
         logger.info("Konfiguration angefordert für Typ: {}", type != null ? type : "aktiv");
-
+        
         Map<String, Object> config;
-
+        
         // Wenn ein spezifischer Produkttyp angefordert wurde
         if (type != null && !type.isEmpty()) {
             config = configService.loadProduktTypById(type);
-
+            
             // Fallback auf aktiven Produkttyp, wenn angeforderten nicht gefunden
             if (config == null) {
-                logger.warn("Angeforderten Produkttyp '{}' nicht gefunden, gebe aktiven Produkttyp zurück", type);
+                config.put(PRODUKT_TYP_ID, configService.getActiveProduktTypId());
                 config = new HashMap<>();
                 config.put("produktTypId", configService.getActiveProduktTypId());
                 config.put("produktTypName", configService.getProduktTypName());
@@ -58,7 +59,7 @@ public class VisionController {
             // Demo-Daten hinzufügen
             config.put("demoData", configService.getDemoDataMap());
         }
-
+        
         return ResponseEntity.ok(config);
     }
 
@@ -80,11 +81,11 @@ public class VisionController {
     @GetMapping("/allProductTypes")
     public ResponseEntity<Map<String, Object>> getAllProductTypes() {
         logger.info("Alle Produkttypen angefordert");
-
         Map<String, Object> response = new HashMap<>();
+        response.put(PRODUKT_TYP_ID, configService.getActiveProduktTypId());
         response.put("activeType", configService.getActiveProduktTypId());
         response.put("produktTypen", configService.getAllProduktTypen());
-
+        
         return ResponseEntity.ok(response);
     }
 
@@ -92,10 +93,10 @@ public class VisionController {
     @PostMapping("/setProductType")
     public ResponseEntity<Map<String, Object>> setProductType(@RequestParam(name = "type") String type) {
         logger.info("Produkttyp-Änderung angefordert: {}", type);
-
+        
         Map<String, Object> response = new HashMap<>();
         boolean success = configService.changeActiveProduktTyp(type);
-
+        
         if (success) {
             response.put("success", true);
             response.put("message", "Produkttyp erfolgreich geändert auf: " + configService.getProduktTypName());
@@ -109,7 +110,7 @@ public class VisionController {
             response.put("message", "Produkttyp '" + type + "' nicht gefunden");
             response.put("availableTypes", configService.getAllProduktTypen());
         }
-
+        
         return ResponseEntity.ok(response);
     }
 
@@ -123,98 +124,80 @@ public class VisionController {
     public ResponseEntity<String> analyzeImageWithTextLanguage(
             @RequestBody ProduktTypParameter request,
             @PathVariable(name = "language") String language) {
-
         try {
-            // Sprachcode ermitteln (falls angegeben)
-            String targetLanguage = language;
-            if (targetLanguage == null || targetLanguage.isEmpty()) {
-                targetLanguage = languageConfigService.getDefaultLanguage();
-            }
-
+            String targetLanguage = resolveLanguage(language);
             logger.info("Bild- und Text-Analyse angefordert in Sprache: {}", targetLanguage);
+
+            Map<String, String> paramValues = extractParameters(request);
             StringBuilder response = new StringBuilder();
-            Map<String, String> paramValues = new HashMap<>();
 
-            // Parameter-Werte in eine Map umwandeln
-            if (request.getP1() != null)
-                paramValues.put("p1", request.getP1());
-            if (request.getP2() != null)
-                paramValues.put("p2", request.getP2());
-            if (request.getP3() != null)
-                paramValues.put("p3", request.getP3());
-            if (request.getP4() != null)
-                paramValues.put("p4", request.getP4());
-            if (request.getP5() != null)
-                paramValues.put("p5", request.getP5());
-            if (request.getP6() != null)
-                paramValues.put("p6", request.getP6());
-            if (request.getP7() != null)
-                paramValues.put("p7", request.getP7());
-            if (request.getP8() != null)
-                paramValues.put("p8", request.getP8());
-            if (request.getP9() != null)
-                paramValues.put("p9", request.getP9());
-            if (request.getP10() != null)
-                paramValues.put("p10", request.getP10());
-
-            // Wenn Bild vorhanden ist, Vision API aufrufen
-            String base64Image = request.getImageBase64();
-            if (base64Image != null && !base64Image.isEmpty()) {
-                logger.info("Bildanalyse wird durchgeführt");
-                // Base64 säubern
-                if (base64Image.contains(",")) {
-                    base64Image = base64Image.split(",")[1];
-                }
-                base64Image = base64Image.replaceAll("[^A-Za-z0-9+/=]", "");
-
-                byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-
-                // Aufruf Vision API
-                String visionResult = visionService.analyzeImage(imageBytes);
-
-                // Überschrift lokalisieren
-                String heading;
-                if ("en".equals(targetLanguage)) {
-                    heading = "=== Google Vision Result ===\n";
-                } else {
-                    heading = "=== Google Vision Ergebnis ===\n";
-                }
-
-                response.append(heading)
-                        .append(visionResult).append("\n\n");
+            if (isImageProvided(request.getImageBase64())) {
+                response.append(processImage(request.getImageBase64(), targetLanguage));
             } else {
                 logger.info("Keine Bildanalyse - nur Text-Generierung");
             }
 
-            // GPT-Beschreibung in der gewünschten Sprache generieren
-            String gptText = visionService.generateGptDescription(paramValues, targetLanguage);
-
-            // Produkttyp-Name holen
-            String produktTypName = configService.getProduktTypName();
-
-            // Überschrift lokalisieren
-            String heading;
-            if ("en".equals(targetLanguage)) {
-                heading = "=== Product Description (" + produktTypName + ") ===\n";
-            } else {
-                heading = "=== Produktbeschreibung (" + produktTypName + ") ===\n";
-            }
-
-            response.append(heading).append(gptText);
-
+            response.append(generateProductDescription(paramValues, targetLanguage));
             return ResponseEntity.ok(response.toString());
 
         } catch (Exception e) {
-            logger.error("Fehler bei der Verarbeitung: " + e.getMessage(), e);
-
-            String errorMsg;
-            if (language != null && "en".equals(language.toLowerCase())) {
-                errorMsg = "❌ Error during processing: " + e.getMessage();
-            } else {
-                errorMsg = "❌ Fehler bei der Verarbeitung: " + e.getMessage();
-            }
-
-            return ResponseEntity.internalServerError().body(errorMsg);
+            return handleProcessingError(language, e);
         }
+    }
+
+    private String resolveLanguage(String language) {
+        return (language == null || language.isEmpty()) ? languageConfigService.getDefaultLanguage() : language;
+    }
+
+    private Map<String, String> extractParameters(ProduktTypParameter request) {
+        Map<String, String> paramValues = new HashMap<>();
+        if (request.getP1() != null) paramValues.put("p1", request.getP1());
+        if (request.getP2() != null) paramValues.put("p2", request.getP2());
+        if (request.getP3() != null) paramValues.put("p3", request.getP3());
+        if (request.getP4() != null) paramValues.put("p4", request.getP4());
+        if (request.getP5() != null) paramValues.put("p5", request.getP5());
+        if (request.getP6() != null) paramValues.put("p6", request.getP6());
+        if (request.getP7() != null) paramValues.put("p7", request.getP7());
+        if (request.getP8() != null) paramValues.put("p8", request.getP8());
+        if (request.getP9() != null) paramValues.put("p9", request.getP9());
+        if (request.getP10() != null) paramValues.put("p10", request.getP10());
+        return paramValues;
+    }
+
+    private boolean isImageProvided(String base64Image) {
+        return base64Image != null && !base64Image.isEmpty();
+    }
+
+    private String processImage(String base64Image, String targetLanguage) throws Exception {
+        logger.info("Bildanalyse wird durchgeführt");
+        base64Image = cleanBase64Image(base64Image);
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+        String visionResult = visionService.analyzeImage(imageBytes);
+
+        String heading = "en".equals(targetLanguage) ? "=== Google Vision Result ===\n" : "=== Google Vision Ergebnis ===\n";
+        return heading + visionResult + "\n\n";
+    }
+
+    private String cleanBase64Image(String base64Image) {
+        if (base64Image.contains(",")) {
+            base64Image = base64Image.split(",")[1];
+        }
+        return base64Image.replaceAll("[^A-Za-z0-9+/=]", "");
+    }
+
+    private String generateProductDescription(Map<String, String> paramValues, String targetLanguage) {
+        String gptText = visionService.generateGptDescription(paramValues, targetLanguage);
+        String heading = "en".equals(targetLanguage) ? 
+                "=== Product Description ===\n" : 
+                "=== Produktbeschreibung ===\n";
+        return heading + gptText;
+    }
+
+    private ResponseEntity<String> handleProcessingError(String language, Exception e) {
+        logger.error("Fehler bei der Verarbeitung: " + e.getMessage(), e);
+        String errorMsg = (language != null && "en".equalsIgnoreCase(language)) ?
+                "❌ Error during processing: " + e.getMessage() :
+                "❌ Fehler bei der Verarbeitung: " + e.getMessage();
+        return ResponseEntity.internalServerError().body(errorMsg);
     }
 }

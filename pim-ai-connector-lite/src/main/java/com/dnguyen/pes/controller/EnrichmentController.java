@@ -75,14 +75,13 @@ public class EnrichmentController {
                         String gptText = visionService.generateGptDescription(paramValues, targetLanguage);
 
                         // Produkttyp-Name holen
-                        String produktTypName = configService.getProduktTypName();
 
                         // Überschrift lokalisieren
                         String heading;
                         if ("en".equals(targetLanguage)) {
-                                heading = "=== Product Description (" + produktTypName + ") ===\n";
+                                heading = "=== Product Description ===\n";
                         } else {
-                                heading = "=== Produktbeschreibung (" + produktTypName + ") ===\n";
+                                heading = "=== Produktbeschreibung ===\n";
                         }
 
                         StringBuilder response = new StringBuilder();
